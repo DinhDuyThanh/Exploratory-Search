@@ -57,6 +57,8 @@ window.onerror=function(msg, url, linenumber){
         <!----//End-dropdown--->
 		<!---//End-click-drop-down-menu----->
 		<script>
+		
+		//Kiem tra xem tu co phai stopWord khong
 		function checkStopWord(word){
 			
 				var stopWord =["a","about","above","after","again","against","all","am","an","and","any","are","aren't","as",
@@ -70,10 +72,8 @@ window.onerror=function(msg, url, linenumber){
 					return true;
 				return false;
 	}
-		function lodtest(str){
-			$("#loading").fadeIn("slow");
-		}
-	//Lay thong tin tu kieu
+
+	//mo rong truy van voi uri va kieu dau vao
 		function getInfoFromType(key, type, where){
 			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
 			var query = "SELECT * WHERE {<"+key+"> "+type+" ?s. ?s foaf:page ?url}";	
@@ -149,6 +149,8 @@ window.onerror=function(msg, url, linenumber){
 								});	
 				
 		}
+		
+		//Phan tich va tim kiem thuc the
 			function search(type){
 			$("#loading").fadeIn("slow");
 			
@@ -328,40 +330,13 @@ window.onerror=function(msg, url, linenumber){
 				}
 			}
 			
-			
+		//	
 			function start(){
 				document.getElementById("top_search").style.display = 'block';
 				$("#a-start").fadeOut();
 			}
 			
-			function show1(key,type){
-				$("#loading").fadeIn("slow");
-				//document.getElementById("loading").style.display = 'block';
-				document.getElementById("abc").style.display = 'none';
-				str = document.getElementById("text_search").value;
-			  var xmlhttp;
-			if (window.XMLHttpRequest)
-			  {// code for IE7+, Firefox, Chrome, Opera, Safari
-			  xmlhttp=new XMLHttpRequest();
-			  }
-			else
-			  {// code for IE6, IE5
-			  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-			  }
-			xmlhttp.onreadystatechange=function()
-			  {
-			  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-				{
-				document.getElementById("loading").style.display = 'none';
-				$("#abc").fadeIn("slow");
-				document.getElementById("abc").innerHTML=xmlhttp.responseText;
-				document.getElementById("more").style.display = 'block';
-				search_info();
-				}
-			  }
-			xmlhttp.open("GET","src/sparql_query.php?type="+type+"&text="+str+"&key="+key,true);
-			xmlhttp.send();
-			}
+			
 			
 			function searchType(key,type){
 				$("#loading").fadeIn("slow");
