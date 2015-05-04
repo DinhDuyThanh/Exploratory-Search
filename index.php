@@ -58,7 +58,7 @@ window.onerror=function(msg, url, linenumber){
 		<!---//End-click-drop-down-menu----->
 		<script>
 		
-		//Kiem tra xem tu co phai stopWord khong
+		//Kiem tra xem tu co phai stop Word khong
 		function checkStopWord(word){
 			
 				var stopWord =["a","about","above","after","again","against","all","am","an","and","any","are","aren't","as",
@@ -74,11 +74,18 @@ window.onerror=function(msg, url, linenumber){
 	}
 
 	//mo rong truy van voi uri va kieu dau vao
-		function getInfoFromType(key, type, where){
+		function getInfoFromType(key, type){
+		if(type=="movie:film"){
+			type=key.replace("http://data.linkedmdb.org/resource/","");
+			var ind = parseInt(type.indexOf("\/"));
+			type = type.slice(0,ind);
+			type="movie:"+type;
+			alert(type+key);
+		}
 			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
-			var query = "SELECT * WHERE {<"+key+"> "+type+" ?s. ?s foaf:page ?url}";	
+			var query = "SELECT * WHERE {{<"+key+"> "+type+" ?s}UNION{?s "+type+"<"+key+"> }. ?s foaf:page ?url}";	
 			//alert(query);
-		var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 		//$("#functionAResult").append(uri+"</br>");
 				//alert(query);
 							$.ajax({
@@ -114,19 +121,22 @@ window.onerror=function(msg, url, linenumber){
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														type = "\""+data.property['/type/object/type'].values[0].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
-												else des="...";
+												else des="";
 												  if(data.property['/common/topic/image']!= undefined )
 													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
 													//img =data.property['/common/topic/image']['values'][0]['id'];
 												else img=""; 
 												//img = ""; 
 												//img = data.property['/type/object/name'].values[0].text;
-												if(name!="")
+												if(name!=""&&des!="")
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
@@ -138,10 +148,9 @@ window.onerror=function(msg, url, linenumber){
 													+'</div>'
 												+'</li>';
 												else str="";
-												if(where == "top"){
 													$("#top_box").show();
-													$("#topsearch").append(str);
-													}												
+													$("#topsearch").prepend(str);
+																								
 												} 
 											});	 
 										}
@@ -171,6 +180,7 @@ window.onerror=function(msg, url, linenumber){
 						arrKey.push({key:count++,value:res[i]+" "+res[i+1]});
 					arrKey.push({key:count++,value:res[i]});	
 				}
+				//module mo rong tu tim kiem voi cac tu khoa de xac dinh kieu
 				for(var i=0;i<arrKey.length;i++){
 				if(checkStopWord(arrKey[i].value)) continue;
 					if(arrKey[i].value == "actor"){
@@ -179,14 +189,26 @@ window.onerror=function(msg, url, linenumber){
 					if(arrKey[i].value == "film"){
 						arrType.push({type:"movie:film"});
 					}
+					if(arrKey[i].value == "editor"){
+						arrType.push({type:"movie:editor"});
+					}
+					if(arrKey[i].value == "director"){
+						arrType.push({type:"movie:director"});
+					}
+					if(arrKey[i].value == "writer"){
+						arrType.push({type:"movie:writer"});
+					}
+					if(arrKey[i].value == "producer"){
+						arrType.push({type:"movie:producer"});
+					}
 				}
+				//tim kiem thuc the
 				for(var i=0;i<arrKey.length;i++){
 				if(checkStopWord(arrKey[i].value)) continue;
-					//alert(arrKey[i].value);
-			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url}";		
+				//	Tim kiem thuc the chinh xac
+			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url}";		
 				
 						var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-				//alert(query);
 							$.ajax({
 									type:     "GET",
 									url:      uri, // <-- Here
@@ -199,8 +221,6 @@ window.onerror=function(msg, url, linenumber){
 									document.getElementById("loading").style.display = 'none';
 									$("#abc").fadeIn("slow");
 									$(".alert-box").fadeOut();
-									
-									//$("#abc").append(JSON.stringify(data));
 								 		var arr = data['results']['bindings'];
 									 for(var i=0;i<arr.length;i++)
 										if(arr[i]['url']['value'].search("freebase")!=-1){
@@ -208,7 +228,7 @@ window.onerror=function(msg, url, linenumber){
 											if(arrType.length>0)
 											for(var j=0;j<arrType.length;j++)
 											{
-												getInfoFromType(arr[i]['s']['value'], arrType[j].type, "top");
+												getInfoFromType(arr[i]['s']['value'], arrType[j].type);
 											}
 											var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
 											var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
@@ -225,19 +245,22 @@ window.onerror=function(msg, url, linenumber){
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														type = "\""+data.property['/type/object/type'].values[0].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
-												else des="...";
+												else des="";
 												  if(data.property['/common/topic/image']!= undefined )
 													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
 													//img =data.property['/common/topic/image']['values'][0]['id'];
 												else img=""; 
 												//img = ""; 
 												//img = data.property['/type/object/name'].values[0].text;
-												if(name!="")
+												if(name!=""&&des!="")
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
@@ -259,10 +282,9 @@ window.onerror=function(msg, url, linenumber){
 									 } 
 								});	
 	
-				
+				//tim kiem thuc the mo rong
 				var query = "SELECT * WHERE { ?s rdfs:label ?o . FILTER regex(?o, '"+res[i]+"','i'). ?s foaf:page ?url} limit 16";	
 				var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-				//alert(query);
 							$.ajax({
 									type:     "GET",
 									url:      uri, // <-- Here
@@ -276,7 +298,9 @@ window.onerror=function(msg, url, linenumber){
 									$("#abc").fadeIn("slow");
 									
 									//$("#abc").append(JSON.stringify(data));
-								 		var arr = data['results']['bindings'];
+									var arr;
+									if(data['results']['bindings']!= undefined)
+								 		arr = data['results']['bindings'];
 									 for(var i=0;i<arr.length;i++)
 										if(arr[i]['url']['value'].search("freebase")!=-1){
 											//alert(arr[i]['s']['value']);
@@ -295,8 +319,14 @@ window.onerror=function(msg, url, linenumber){
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
@@ -450,8 +480,8 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/common/topic/notable_types']!= undefined )
-					type = data.property['/common/topic/notable_types'].values[0].text;
+				if(data.property['/type/object/type']!= undefined )
+					type = data.property['/type/object/type'].values[0].text;
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
@@ -511,8 +541,8 @@ function showPopupEX(uri,key){
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/common/topic/notable_types']!= undefined )
-					type = data.property['/common/topic/notable_types'].values[0].text;
+				if(data.property['/type/object/type']!= undefined )
+					type = data.property['/type/object/type'].values[0].text;
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
@@ -695,6 +725,8 @@ function exSearch(){
 	var countA = 0;
 	
 	str = document.getElementById("rawSAkey").innerHTML;
+	var mode = $("#typeSearchSA").val();	
+	var range = $("#range").val();
 	var check = document.getElementById("istest");
     if(check.checked == true)
 	
@@ -704,8 +736,7 @@ function exSearch(){
 		alert("Please Select SA key");
 			return;
 	}
-	range = document.getElementById("range").value;
-	mode = document.getElementById("typeSearchSA").value;
+	
 	document.getElementById("more").style.display = 'none';
 	document.getElementById("abc").style.marginTop = "10%";
 	$("#abc").fadeOut();
@@ -736,7 +767,8 @@ function exSearch(){
 		$("#top_box").show();
 		$("#all_box").show();
 		
-									$("#keySA").fadeIn();
+		$("#keySA").fadeIn();
+		//tim kiem tat ca thuoc tinh cua thuc the dau tien
 		for(i=0;i<arr.length;i++){
 			if(arr[i]['o']['type']=="uri")
 				if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
@@ -745,6 +777,7 @@ function exSearch(){
 					pivot.push({key:tmp,value:tmp});
 				}
 		}
+		//Tinh trong so cua cac thuco tinh cua thuc the dau tien do
 		for(i=1;i<res.length;i++){
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
@@ -764,9 +797,8 @@ function exSearch(){
 									 } 
 								});
 		}
+		//Neu chi co 1 thuc the tim kiem thi dua ra cac thuoc tinh cua thuc the do
 		if(res.length==2){
-			var count2=0;
-			var countb=0,counta=0;
 			for(var j=0;j<pivot.length;j++){
 			
 						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
@@ -798,8 +830,6 @@ function exSearch(){
 											jqXHR.key=key;
 										},
 										success:function(data, textStatus, jqXHR){
-										//$("#functionAResult").append(data["Title"]+"</br>");										
-											//$("#functionAResult").append(data["imdbRating"]+data["Title"]+data["imdbID"]+"</br>");
 											var x = parseInt(data["imdbRating"]);
 											arrIMDB.push({vote:x,page:arr[0]['url']['value'],key:jqXHR.key});
 											 //alert(JSON.stringify(arrIMDB.sort(sortStringDesc)));
@@ -821,8 +851,14 @@ function exSearch(){
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
@@ -873,8 +909,8 @@ function exSearch(){
 												 if(data.property['/type/object/name']!= undefined )
 																name = data.property['/type/object/name'].values[0].text;
 															else name="";
-															if(data.property['/common/topic/notable_types']!= undefined )
-																type = data.property['/common/topic/notable_types'].values[0].text;
+															if(data.property['/type/object/type']!= undefined )
+																type = data.property['/type/object/type'].values[0].text;
 															else type="...";
 														if(data.property['/common/topic/description']!= undefined )
 																des = data.property['/common/topic/description'].values[0].text;
@@ -914,11 +950,11 @@ function exSearch(){
 						});	
 			}
 		}
+		//Neu co hai thuc the tro len thi thuc hien lan truyen
 		if(res.length>2)
 		for(i=2;i<res.length;i++){
 			for(j=0;j<pivot.length;j++){
 			
-				//$("#functionAResult").append("aa"+pivot[j].key);	
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {{?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}.{{?s ?o <"+pivot[j].key+">} UNION {<"+pivot[j].key+"> ?o ?s}}}";
 		uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 		//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
@@ -968,8 +1004,14 @@ function exSearch(){
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
@@ -1076,8 +1118,14 @@ function exSearch(){
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
-												if(data.property['/common/topic/notable_types']!= undefined )
-													type = data.property['/common/topic/notable_types'].values[0].text;
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
@@ -1113,81 +1161,7 @@ function exSearch(){
 				});	 
 			}
 		} }
-});
-
-	/* $.ajax({linkedmdb
-				type:"get",
-				url:"src/semanticrelated.php",
-				data:"type=0&uri="+res[1],
-				async:true,
-				success:function(kq){
-				$("#abc").fadeIn("slow");
-				$("#keySA").fadeIn();	
-				$("#functionAResult").html('');
-				json = kq;
-				$("#functionAResult").html(json);
-				}
-				})	
-						
-		$.ajax({
-				type:"get",
-				url:"src/semanticrelated.php",
-				data:"type=1&uri="+str,
-				async:true,
-				success:function(kq){
-				functionA = kq;
-				//$("#functionAResult").html('');
-				//var json = decodeURIComponent(kq);
-				$("#functionAResult").append("</br>"+functionA);
-				}
-				})	
-	  if(res.length==2){
-		$.ajax({
-				type:"get",
-				url:"src/semanticrelated.php",
-				data:"type=2&uri="+res[i]+"&mode="+mode,
-				async:true,
-				success:function(kq){
-				$("#loading").fadeOut("slow");
-				functionAB = kq;
-				$("#functionAResult").append("</br>"+functionAB);
-				 }
-				})	
-				//sleep(1000);
-			}   
-	  if(res.length>2)
-		for(var i=2;i<res.length;i++){
-		$.ajax({
-				type:"get",
-				url:"src/semanticrelated.php",
-				data:"type=3&uri="+res[i]+"&mode="+mode,
-				async:true,
-					success:function(kq){
-					$("#loading").fadeOut("slow");
-					functionAB = kq;
-					$("#functionAResult").append("</br>"+functionAB);
-					 }
-				})	
-				//sleep(1000);
-			}   */  
-		/* if(res.length>2)
-		for(var i=2;i<res.length;i++){
-		s = res[1]+" "+res[i];
-		$.ajax({
-				type:"get",
-				url:"src/ex_search.php",
-				data:"key="+s+"&range="+range+"&type="+type,
-				async:true,
-				success:function(kq){
-				document.getElementById("loading").style.display = 'none';
-				$("#abc").fadeIn("slow");
-				$("#keySA").fadeIn();	
-				var tmp = document.getElementById("abc").innerHTML;
-				document.getElementById("abc").innerHTML = tmp + kq;				
-				//$("#abc").append(kq);
-				}
-				})	
-			} */		
+});		
 }
 
 
