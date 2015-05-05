@@ -18,8 +18,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-//window.alert = function() {};
-//alert = function(){};
+alert = function(){};
 window.onerror=function(msg, url, linenumber){
  alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
  return true
@@ -774,8 +773,8 @@ function exSearch(){
 	var check = document.getElementById("istest");
     if(check.checked == true)
 	
-	//str = " http://data.linkedmdb.org/resource/film/72";
-	str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
+	str = " http://data.linkedmdb.org/resource/film/72";
+	//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
 	
 	if(encodeURIComponent(str)=="%0A"){
 		alert("Please Select SA key");
@@ -929,9 +928,7 @@ function exSearch(){
 											+'</div>'
 											+'</div>'
 												+'</li>';
-											arrNameB.push({key:jqXHR.key,value:name});
-										//	alert(name);
-										//alert(JSON.stringify(arrNameB));	
+											arrNameB.push({key:jqXHR.key,value:name});	
 											}
 										else str="";
 									count2++;
@@ -1006,10 +1003,10 @@ function exSearch(){
 									}
 									
 									
-									/* if((type.search("film")!=-1)||(type.search("actor")!=-1)||
+									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
 									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
 									(type.search("director")!=-1)||(type.search("producer")!=-1))
-									$("#topsearch").append(str); */
+									$("#topsearch").append(str); 
 									$("#allsearch").append(str);									
 									} 
 								});	
@@ -1461,7 +1458,12 @@ else if(mode=="specification"){
 											 }
 									
 									}
-									$("#allsearch").append(str);									
+								
+								if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
+									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
+									(type.search("director")!=-1)||(type.search("producer")!=-1))
+								$("#topsearch").append(str); 
+								$("#allsearch").append(str);									
 									} 
 								});	
 							}
