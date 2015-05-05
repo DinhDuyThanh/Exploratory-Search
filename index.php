@@ -18,7 +18,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-
+//window.alert = function() {};
+alert = function(){};
 window.onerror=function(msg, url, linenumber){
  alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
  return true
@@ -320,7 +321,7 @@ window.onerror=function(msg, url, linenumber){
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].length>=2){
+														if(data.property['/type/object/type'].values.length>=2){
 															type = "\""+data.property['/type/object/type'].values[0].text+"\""
 															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
@@ -730,8 +731,9 @@ function exSearch(){
 	var check = document.getElementById("istest");
     if(check.checked == true)
 	
-	str = " http://data.linkedmdb.org/resource/film/72";
-		//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
+	//str = " http://data.linkedmdb.org/resource/film/72";
+	str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
+	
 	if(encodeURIComponent(str)=="%0A"){
 		alert("Please Select SA key");
 			return;
@@ -747,9 +749,8 @@ function exSearch(){
 	$("#loading").fadeIn("slow");
 	$("#keySA").fadeOut();
 	var res = str.split(" ");
-		
 	prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
-		
+	if(mode=="simple"){	
 	var query = "SELECT distinct ?o WHERE {{<"+res[1]+"> ?p ?o} UNION {?o ?p <"+res[1]+">}}";
 	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 	var expiration = new Date();
@@ -799,6 +800,9 @@ function exSearch(){
 		}
 		//Neu chi co 1 thuc the tim kiem thi dua ra cac thuoc tinh cua thuc the do
 		if(res.length==2){
+		            var count2=0;
+            var countb=0,counta=0;
+
 			for(var j=0;j<pivot.length;j++){
 			
 						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
@@ -852,7 +856,7 @@ function exSearch(){
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].length>=2){
+														if(data.property['/type/object/type'].values.length>=2){
 															type = "\""+data.property['/type/object/type'].values[0].text+"\""
 															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
@@ -969,6 +973,7 @@ function exSearch(){
 				success:function(data, textStatus, jqXHR){
 					var uri1 = jqXHR.uri1; 
 					var uri2 = jqXHR.uri2; 
+					if(data['results']['bindings']!=undefined)
 					if(data['results']['bindings'].length>0){
 					var count = data['results']['bindings'][0]['count']['value'];
 					arrAB.push({key:uri1,key1:uri2,value:count});
@@ -1005,7 +1010,7 @@ function exSearch(){
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].length>=2){
+														if(data.property['/type/object/type'].values.length>=2){
 															type = "\""+data.property['/type/object/type'].values[0].text+"\""
 															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
@@ -1119,7 +1124,7 @@ function exSearch(){
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].length>=2){
+														if(data.property['/type/object/type'].values.length>=2){
 															type = "\""+data.property['/type/object/type'].values[0].text+"\""
 															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
@@ -1160,8 +1165,435 @@ function exSearch(){
 					} 
 				});	 
 			}
-		} }
+		} 
+		
+	}
+		
 });		
+	}
+else if(mode=="specification"){	
+	var tmp="";
+	for(var i=1;i<res.length;i++)
+		if(i==1)
+			tmp=tmp+"{<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
+		else
+			tmp=tmp+" UNION {<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
+
+	var query = "SELECT distinct ?o WHERE {"+tmp+"}";
+	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+	var expiration = new Date();
+	expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+	setCookie("PivotKey",res[1],expiration);
+	$.ajax({
+    type:     "GET",
+    url:      uri, // <-- Here
+    dataType: "jsonp",
+    success: function(data){						
+		var arr = data['results']['bindings'];
+	   $("#loading").fadeOut("slow");
+	   $("#abc").fadeIn();
+	   
+		$("#top_box").show();
+		$("#all_box").show();
+		
+		$("#keySA").fadeIn();
+		//loc ra cac thuc the la uri
+		for(i=0;i<arr.length;i++){
+			if(arr[i]['o']['type']=="uri")
+				if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
+				&&(arr[i]['o']['value'].search("film_film_distributor_relationship")==-1)){
+					tmp = arr[i]['o']['value'];
+					pivot.push({key:tmp,value:tmp});
+				}
+		}
+		//Tinh trong so cua cac thuco tinh cua thuc the dau tien do
+		for(i=1;i<res.length;i++){
+		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}";
+						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+						  $.ajax({
+								type:     "GET",
+								url:      uri, // <-- Here
+								dataType: "jsonp",
+								beforeSend: function (jqXHR) {
+										jqXHR.key = res[i];
+									},
+								success:function(data, textStatus, jqXHR){	
+									var key = jqXHR.key;
+									if(data['results']['bindings'].length>0){	
+									var count = data['results']['bindings'][0]['count']['value'];
+									arrPivot.push({key:key,value:count});
+					}
+									 } 
+								});
+		}
+		//Neu chi co 1 thuc the tim kiem thi dua ra cac thuoc tinh cua thuc the do
+		if(res.length==2){
+		            var count2=0;
+            var countb=0,counta=0;
+
+			for(var j=0;j<pivot.length;j++){
+			
+						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+				//$("#functionAResult").append(uri+"</br");
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = pivot[j].key;
+							},
+						success:function(data, textStatus, jqXHR){						
+						var key = jqXHR.key;
+						if(data == undefined) return;
+						var arr = data['results']['bindings'];
+							
+							
+						 for(var i=0;i<arr.length;i++){
+						 if(arr[i]['url']['value'].search("imdb.com")!=-1){
+							var page = arr[i]["url"]["value"].replace("http://www.imdb.com/title/","");
+							page = page.replace("/","");
+							var uri = "http://www.omdbapi.com/?i="+page+"&r=json"; 
+							$.ajax({
+										type:     "GET",
+										url:      uri, // <-- Here
+										dataType: 'json',
+										beforeSend: function (jqXHR) {
+											jqXHR.key=key;
+										},
+										success:function(data, textStatus, jqXHR){
+											var x = parseInt(data["imdbRating"]);
+											arrIMDB.push({vote:x,page:arr[0]['url']['value'],key:jqXHR.key});
+											 //alert(JSON.stringify(arrIMDB.sort(sortStringDesc)));
+										}
+							});}
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									var name,img,type,des;
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].values.length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+											}
+										else str="";
+									count2++;
+									if(count2==(pivot.length-1)){
+									
+										if(arrIMDB.length>=2){
+											  for(var i=0;i<arrIMDB.length;i++)												for(var j=i+1;j<arrIMDB.length;j++)
+												 if(arrIMDB[i].vote<arrIMDB[j].vote){
+														 var tmp = arrIMDB[i].vote;
+														arrIMDB[i].vote = arrIMDB[j].vote;
+														arrIMDB[j].vote= tmp; 
+													}
+											for(var i=0;i<3;i++){
+												if(arrIMDB[i].page!=undefined){
+											var page = arrIMDB[i].page.replace("http://www.freebase.com/view","");
+											var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+											$.ajax({
+												type:     "GET",
+												url:      uri, // <-- Here
+												dataType: 'json',
+												beforeSend: function (jqXHR) {
+																jqXHR.uri = uri;
+																jqXHR.key = arrIMDB[i].key;
+												},
+												success:function(data, textStatus, jqXHR){
+												 var name,img,type,des;
+												 if(data.property['/type/object/name']!= undefined )
+																name = data.property['/type/object/name'].values[0].text;
+															else name="";
+															if(data.property['/type/object/type']!= undefined )
+																type = data.property['/type/object/type'].values[0].text;
+															else type="...";
+														if(data.property['/common/topic/description']!= undefined )
+																des = data.property['/common/topic/description'].values[0].text;
+															else des="...";
+													  if(data.property['/common/topic/image']!= undefined )
+																img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+															else img="";  
+															if(name!=""){
+													str = '<li><div class="post-info">'
+														+img
+														+'<div class="post-basic-info">'
+														+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+														+'	<p>'+des+'</p>'
+														+'</div>'
+														+'</div>'
+															+'</li>'; 
+														}
+													else str="";
+													$("#topsearch").append(str);									
+												} 
+											});	
+												}
+											}											
+											
+											 }
+									
+									}
+									$("#allsearch").append(str);									
+									} 
+								});	
+							}
+							}
+						}
+						});	
+			}
+		}
+		//Neu co hai thuc the tro len thi thuc hien lan truyen
+		if(res.length>2)
+		for(i=2;i<res.length;i++){
+			for(j=0;j<pivot.length;j++){
+			
+		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {{?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}.{{?s ?o <"+pivot[j].key+">} UNION {<"+pivot[j].key+"> ?o ?s}}}";
+		uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+		//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
+		  $.ajax({
+				type:     "GET",
+				url:      uri, // <-- Here
+				dataType: "jsonp",
+				beforeSend: function (jqXHR) {
+                        jqXHR.uri1 = res[i];
+						jqXHR.uri2 = pivot[j].key;
+                    },
+				success:function(data, textStatus, jqXHR){
+					var uri1 = jqXHR.uri1; 
+					var uri2 = jqXHR.uri2; 
+					if(data['results']!=undefined)
+					if(data['results']['bindings'].length>0){
+					var count = data['results']['bindings'][0]['count']['value'];
+					arrAB.push({key:uri1,key1:uri2,value:count});
+					countAB+=1;			
+				query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+				//$("#functionAResult").append(uri+"</br");
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = uri2;
+							},
+						success:function(data, textStatus, jqXHR){
+						var key = jqXHR.key;
+						var arr = data['results']['bindings'];
+						 for(var i=0;i<arr.length;i++)
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									$("#keySA").fadeIn();
+									var name,img,type,des;
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].values.length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+										//	alert(name);
+										//alert(JSON.stringify(arrNameB));	
+											}
+										else str="";
+									$("#topsearch").append(str);									
+									} 
+								});	
+							}
+						}
+						});						
+					//$("#functionAResult").append(uri1+","+uri2+":");					
+					//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
+						query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
+						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+						//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
+						if(getKeyValueArray(uri2,arrA)==0)
+						  $.ajax({
+								type:     "GET",
+								url:      uri, // <-- Here
+								dataType: "jsonp",
+								beforeSend: function (jqXHR) {
+										jqXHR.key = uri2;
+									},
+								success:function(data, textStatus, jqXHR){
+									if(data['results']['bindings'].length>0){	
+									//$("#functionAResult").append(jqXHR.key+":");					
+									//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
+									var count = data['results']['bindings'][0]['count']['value'];
+									arrA.push({key:jqXHR.key,value:count});
+									countA +=1;
+									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"bb");
+									 if(countA==countAB){
+											$("#functionAResult").append(JSON.stringify(arrAB[0]));
+											for(var i=0;i<arrAB.length;i++){
+												
+												relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
+											}
+											eraseCookie("RelateArr");
+											var json = JSON.stringify(relatedAB);
+											var expiration = new Date();
+											expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+											setCookie("RelateArr",json,expiration);
+											
+										}
+									
+									}
+									
+									 } 
+								});	
+					}
+					
+					else{
+						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+				//$("#functionAResult").append(uri+"</br");
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = uri2;
+							},
+						success:function(data, textStatus, jqXHR){
+						var key = jqXHR.key;
+						if(data==undefined) return;
+						var arr = data['results']['bindings'];
+						 for(var i=0;i<arr.length;i++)
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									$("#keySA").fadeIn();
+									var name,img,type,des;
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].values.length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+										//	alert(name);
+										//alert(JSON.stringify(arrNameB));	
+											}
+										else str="";
+									$("#allsearch").append(str);									
+									} 
+								});	
+							}
+						}
+						});						
+					}
+
+					} 
+				});	 
+			}
+		} 
+		
+	}
+		
+});		
+	
+	}
 }
 
 
