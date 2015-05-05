@@ -19,7 +19,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</script>
 		<script type="text/javascript">
 //window.alert = function() {};
-alert = function(){};
+//alert = function(){};
 window.onerror=function(msg, url, linenumber){
  alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
  return true
@@ -118,14 +118,22 @@ window.onerror=function(msg, url, linenumber){
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;												
+												var name,img,type,des;
+												type="";												
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														type = "\""+data.property['/type/object/type'].values[0].text+"\""
-														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
-														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -207,7 +215,7 @@ window.onerror=function(msg, url, linenumber){
 				for(var i=0;i<arrKey.length;i++){
 				if(checkStopWord(arrKey[i].value)) continue;
 				//	Tim kiem thuc the chinh xac
-			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url}";		
+			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url.?s rdfs:label ?label}";		
 				
 						var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 							$.ajax({
@@ -217,8 +225,7 @@ window.onerror=function(msg, url, linenumber){
 									beforeSend: function (jqXHR) {
 													jqXHR.key = arrKey[i].value;
 									},
-									success:function(data, textStatus, jqXHR){	
-									
+									success:function(data, textStatus, jqXHR){
 									document.getElementById("loading").style.display = 'none';
 									$("#abc").fadeIn("slow");
 									$(".alert-box").fadeOut();
@@ -239,17 +246,26 @@ window.onerror=function(msg, url, linenumber){
 												dataType: 'json',
 												beforeSend: function (jqXHR) {
 																jqXHR.key = arr[i]['s']['value'];
+																jqXHR.name = arr[i]['label']['value'];
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;												
+												var name,img,type,des;
+												type="";
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														type = "\""+data.property['/type/object/type'].values[0].text+"\""
-														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
-														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -265,7 +281,7 @@ window.onerror=function(msg, url, linenumber){
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
-														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+name+'</a>'
+														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+jqXHR.name+'</a>'
 														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 														+'	<p>'+des+'</p>'
@@ -316,17 +332,22 @@ window.onerror=function(msg, url, linenumber){
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;												
+												var name,img,type,des;
+												type="";												
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -477,12 +498,23 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 				url:      uri, // <-- Here
 				dataType: 'json',
 				success:function(data){
-				var name,img,type,des;												
+				var name,img,type,des;
+												type="";												
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/type/object/type']!= undefined )
-					type = data.property['/type/object/type'].values[0].text;
+				if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
@@ -538,12 +570,23 @@ function showPopupEX(uri,key){
 				var json = getCookie("RelateArr");
 				//var xxx = JSON.parse(json_str);
 				drawgraph1(json,jqXHR.key);
-				var name,img,type,des;												
+				var name,img,type,des;
+												type="";												
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/type/object/type']!= undefined )
-					type = data.property['/type/object/type'].values[0].text;
+				if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
@@ -852,16 +895,21 @@ function exSearch(){
 									},
 									success:function(data, textStatus, jqXHR){	
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -910,11 +958,22 @@ function exSearch(){
 												},
 												success:function(data, textStatus, jqXHR){
 												 var name,img,type,des;
+												type="";
 												 if(data.property['/type/object/name']!= undefined )
 																name = data.property['/type/object/name'].values[0].text;
 															else name="";
-															if(data.property['/type/object/type']!= undefined )
-																type = data.property['/type/object/type'].values[0].text;
+															if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
 															else type="...";
 														if(data.property['/common/topic/description']!= undefined )
 																des = data.property['/common/topic/description'].values[0].text;
@@ -945,6 +1004,12 @@ function exSearch(){
 										 //alert(JSON.stringify(arrIMDB));
 									
 									}
+									
+									
+									/* if((type.search("film")!=-1)||(type.search("actor")!=-1)||
+									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
+									(type.search("director")!=-1)||(type.search("producer")!=-1))
+									$("#topsearch").append(str); */
 									$("#allsearch").append(str);									
 									} 
 								});	
@@ -1006,16 +1071,21 @@ function exSearch(){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -1120,16 +1190,21 @@ function exSearch(){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -1280,16 +1355,21 @@ else if(mode=="specification"){
 									},
 									success:function(data, textStatus, jqXHR){	
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -1336,11 +1416,22 @@ else if(mode=="specification"){
 												},
 												success:function(data, textStatus, jqXHR){
 												 var name,img,type,des;
+												type="";
 												 if(data.property['/type/object/name']!= undefined )
 																name = data.property['/type/object/name'].values[0].text;
 															else name="";
-															if(data.property['/type/object/type']!= undefined )
-																type = data.property['/type/object/type'].values[0].text;
+															if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
 															else type="...";
 														if(data.property['/common/topic/description']!= undefined )
 																des = data.property['/common/topic/description'].values[0].text;
@@ -1431,16 +1522,21 @@ else if(mode=="specification"){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
@@ -1542,16 +1638,21 @@ else if(mode=="specification"){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
+												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														if(data.property['/type/object/type'].values.length>=2){
-															type = "\""+data.property['/type/object/type'].values[0].text+"\""
-															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
 														}
-														else
-															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
