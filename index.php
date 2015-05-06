@@ -18,7 +18,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-alert = function(){};
+//alert = function(){};
 window.onerror=function(msg, url, linenumber){
  alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
  return true
@@ -127,7 +127,7 @@ window.onerror=function(msg, url, linenumber){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -209,12 +209,15 @@ window.onerror=function(msg, url, linenumber){
 					if(arrKey[i].value == "producer"){
 						arrType.push({type:"movie:producer"});
 					}
+					if(arrKey[i].value == "character"){
+						arrType.push({type:"movie:film_character"});
+					}
 				}
 				//tim kiem thuc the
 				for(var i=0;i<arrKey.length;i++){
 				if(checkStopWord(arrKey[i].value)) continue;
 				//	Tim kiem thuc the chinh xac
-			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url.?s rdfs:label ?label}";		
+			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'} UNION {?s movie:film_character_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url.?s rdfs:label ?label}";		
 				
 						var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 							$.ajax({
@@ -224,7 +227,7 @@ window.onerror=function(msg, url, linenumber){
 									beforeSend: function (jqXHR) {
 													jqXHR.key = arrKey[i].value;
 									},
-									success:function(data, textStatus, jqXHR){
+									success:function(data, textStatus, jqXHR){								
 									document.getElementById("loading").style.display = 'none';
 									$("#abc").fadeIn("slow");
 									$(".alert-box").fadeOut();
@@ -259,7 +262,7 @@ window.onerror=function(msg, url, linenumber){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -284,6 +287,16 @@ window.onerror=function(msg, url, linenumber){
 														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 														+'	<p>'+des+'</p>'
+														+'</div>'
+													+'</div>'
+												+'</li>';
+												else if(name.search("character"))
+													str = '<li><div class="post-info">'
+														+'<div class="post-basic-info">'
+														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+jqXHR.name+'</a>'
+														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(jqXHR.name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+														+'	<span><a href="#"><label> </label>\"Film character\"</a></span>'
+														+'	<p>...</p>'
 														+'</div>'
 													+'</div>'
 												+'</li>';
@@ -341,7 +354,7 @@ window.onerror=function(msg, url, linenumber){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -507,7 +520,7 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -579,7 +592,7 @@ function showPopupEX(uri,key){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -903,7 +916,7 @@ function exSearch(){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -964,7 +977,7 @@ function exSearch(){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1077,7 +1090,7 @@ function exSearch(){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1196,7 +1209,7 @@ function exSearch(){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1361,7 +1374,7 @@ else if(mode=="specification"){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1422,7 +1435,7 @@ else if(mode=="specification"){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1533,7 +1546,7 @@ else if(mode=="specification"){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
@@ -1649,7 +1662,7 @@ else if(mode=="specification"){
 															var tmp = data.property['/type/object/type'].values[k].text;
 															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
 															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1))
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
 															if(type=="")
 																type = type +"\""+ tmp +"\"";
 															else
