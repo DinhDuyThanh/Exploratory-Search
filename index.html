@@ -80,7 +80,7 @@ window.onerror=function(msg, url, linenumber){
 			var ind = parseInt(type.indexOf("\/"));
 			type = type.slice(0,ind);
 			type="movie:"+type;
-			alert(type+key);
+			//alert(type+key);
 		}
 			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
 			var query = "SELECT * WHERE {{<"+key+"> "+type+" ?s}UNION{?s "+type+"<"+key+"> }. ?s foaf:page ?url}";	
@@ -303,7 +303,10 @@ window.onerror=function(msg, url, linenumber){
 												else str="";
 												
 													$("#top_box").show();
-													$("#topsearch").append(str);
+													if(img!="")
+														$("#topsearch").prepend(str);
+													else
+														$("#topsearch").append(str);
 																					
 												} 
 											});	 
@@ -384,7 +387,10 @@ window.onerror=function(msg, url, linenumber){
 												+'</li>';
 												else str="";
 												$("#all_box").show();
-												$("#allsearch").append(str);									
+												if(img!="")
+														$("#allsearch").prepend(str);
+													else
+														$("#allsearch").append(str);								
 												} 
 											});	 
 										}
@@ -480,9 +486,12 @@ $(document).ready(function(){
 
 function addExSearch(name,key,uri){
 	tmp = document.getElementById("rawSAkey").innerHTML;
-	if(encodeURIComponent(tmp)=="%0A")
+	if(encodeURIComponent(tmp)=="%0A"){
 		$("#rawSAkey").html('');
+		$("#rawSAname").html('');
+	}
 	$("#rawSAkey").append(" "+key);
+	$("#rawSAname").append(":"+decodeURIComponent(name));
 	str = '<li ><span id="popup-close" title="Close">x</span> <div class="image_title">'+
 				'<a href="#" onclick="showPopup(\''+uri+'\');">'+decodeURIComponent(name)+'</a>'+
 			'</div>'+
@@ -781,14 +790,16 @@ function exSearch(){
 	var countA = 0;
 	
 	str = document.getElementById("rawSAkey").innerHTML;
+	nameStr = $("#rawSAname").html();
 	var mode = $("#typeSearchSA").val();	
 	var range = $("#range").val();
 	var check = document.getElementById("istest");
     if(check.checked == true)
 	
-	str = " http://data.linkedmdb.org/resource/film/72";
-	//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
+	//str = " http://data.linkedmdb.org/resource/film/72";
+	str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
 	
+	//neu khong add gi vao thi se yeu cau them dau vao
 	if(encodeURIComponent(str)=="%0A"){
 		alert("Please Select SA key");
 			return;
@@ -804,13 +815,16 @@ function exSearch(){
 	$("#loading").fadeIn("slow");
 	$("#keySA").fadeOut();
 	var res = str.split(" ");
+	var resName = nameStr.split(":");
 	prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
+	//tim kiem voi cac thuoc tinh cua thuc the dau tien
 	if(mode=="simple"){	
 	var query = "SELECT distinct ?o WHERE {{<"+res[1]+"> ?p ?o} UNION {?o ?p <"+res[1]+">}}";
 	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 	var expiration = new Date();
-	expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+	expiration.setTime(expiration.getTime() + 10000000); //Expire after 10 seconds
 	setCookie("PivotKey",res[1],expiration);
+	//tim kiem cac thuoc tinh cua thuc the dau tien
 	$.ajax({
     type:     "GET",
     url:      uri, // <-- Here
@@ -824,7 +838,7 @@ function exSearch(){
 		$("#all_box").show();
 		
 		$("#keySA").fadeIn();
-		//tim kiem tat ca thuoc tinh cua thuc the dau tien
+		//xac dinh cac thuoc tinh la thuc the hay URI
 		for(i=0;i<arr.length;i++){
 			if(arr[i]['o']['type']=="uri")
 				if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
@@ -833,7 +847,7 @@ function exSearch(){
 					pivot.push({key:tmp,value:tmp});
 				}
 		}
-		//Tinh trong so cua cac thuco tinh cua thuc the dau tien do
+		//Tinh trong so cua cac thuoc tinh cua thuc the dau tien do
 		for(i=1;i<res.length;i++){
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
@@ -857,26 +871,28 @@ function exSearch(){
 		if(res.length==2){
 		            var count2=0;
             var countb=0,counta=0;
-
 			for(var j=0;j<pivot.length;j++){
 			
 						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//$("#functionAResult").append(uri+"</br");
+				//Hien thi thong tin
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
 						dataType: "jsonp",
 						beforeSend: function (jqXHR) {
 								jqXHR.key = pivot[j].key;
+								jqXHR.mainName = resName[1];
 							},
 						success:function(data, textStatus, jqXHR){						
 						var key = jqXHR.key;
+						var mainName = jqXHR.mainName;
 						if(data == undefined) return;
 						var arr = data['results']['bindings'];
 							
 							
 						 for(var i=0;i<arr.length;i++){
+						 //xac dinh cac thuc the la film, tinh muc do diem so de goi y dua vao imdb
 						 if(arr[i]['url']['value'].search("imdb.com")!=-1){
 							var page = arr[i]["url"]["value"].replace("http://www.imdb.com/title/","");
 							page = page.replace("/","");
@@ -891,9 +907,9 @@ function exSearch(){
 										success:function(data, textStatus, jqXHR){
 											var x = parseInt(data["imdbRating"]);
 											arrIMDB.push({vote:x,page:arr[0]['url']['value'],key:jqXHR.key});
-											 //alert(JSON.stringify(arrIMDB.sort(sortStringDesc)));
 										}
 							});}
+						//hien thi thong tin chi tiet	
 							if(arr[i]['url']['value'].search("freebase")!=-1){
 								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
 								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
@@ -902,38 +918,45 @@ function exSearch(){
 									url:      uri, // <-- Here
 									dataType: 'json',
 									beforeSend: function (jqXHR) {
-													jqXHR.uri = uri;
-													jqXHR.key = key;
+										jqXHR.uri = uri;
+										jqXHR.key = key;
+										jqXHR.mainName = mainName;
 									},
 									success:function(data, textStatus, jqXHR){	
-									var name,img,type,des;
-												type="";
-									if(data.property['/type/object/name']!= undefined )
-													name = data.property['/type/object/name'].values[0].text;
-												else name="";
-												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
-												else type="...";
-												if(data.property['/common/topic/description']!= undefined )
-													des = data.property['/common/topic/description'].values[0].text;
-												else des="...";
-												  if(data.property['/common/topic/image']!= undefined )
-													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
-												else img=""; 
-												if(name!=""){
-										str = '<li><div class="post-info">'
+										var name,img,type,des;
+										type="";
+										if(data.property['/type/object/name']!= undefined )
+											name = data.property['/type/object/name'].values[0].text;
+										else name="";
+										if(data.property['/type/object/type']!= undefined ){
+											for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+												var tmp = data.property['/type/object/type'].values[k].text;
+												if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+												(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+												(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+													if(type=="")
+														type = type +"\""+ tmp +"\"";
+													else
+														type = type +"-\""+ tmp +"\"";
+											}
+										}
+										else type="...";
+										if(data.property['/common/topic/description']!= undefined )
+											des = data.property['/common/topic/description'].values[0].text;
+										else des="...";
+										if(data.property['/common/topic/image']!= undefined )
+											img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+										else img="";
+										
+										var why=jqXHR.key.replace("http://data.linkedmdb.org/resource/","");
+										var ind = parseInt(why.indexOf("\/"));
+										why = why.slice(0,ind)+" of "+jqXHR.mainName;
+										
+										if(name!=""){
+											str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
+											+'<h2>'+why+'</h2>'
 											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
@@ -944,11 +967,13 @@ function exSearch(){
 											arrNameB.push({key:jqXHR.key,value:name});	
 											}
 										else str="";
-									count2++;
-									if(count2==(pivot.length-1)){
 									
+									//Neu co nhieu hon mot bo phim thi sap xep theo thu tu giam dan de hien thi	
+									/*count2++;
+									if(count2==(pivot.length-1)){
 										if(arrIMDB.length>=2){
-											  for(var i=0;i<arrIMDB.length;i++)												for(var j=i+1;j<arrIMDB.length;j++)
+											  for(var i=0;i<arrIMDB.length;i++)												
+											  for(var j=i+1;j<arrIMDB.length;j++)
 												 if(arrIMDB[i].vote<arrIMDB[j].vote){
 														 var tmp = arrIMDB[i].vote;
 														arrIMDB[i].vote = arrIMDB[j].vote;
@@ -1011,16 +1036,21 @@ function exSearch(){
 											}											
 											
 											 }
-										 //alert(JSON.stringify(arrIMDB));
 									
-									}
+									}*/
 									
 									
 									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
 									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
 									(type.search("director")!=-1)||(type.search("producer")!=-1))
-									$("#topsearch").append(str); 
-									$("#allsearch").append(str);									
+										if(img!="")
+											$("#topsearch").prepend(str);
+										else
+											$("#topsearch").append(str);
+									if(img!="")
+										$("#allsearch").prepend(str);
+									else
+										$("#allsearch").append(str);								
 									} 
 								});	
 							}
@@ -1036,7 +1066,6 @@ function exSearch(){
 			
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {{?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}.{{?s ?o <"+pivot[j].key+">} UNION {<"+pivot[j].key+"> ?o ?s}}}";
 		uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-		//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
 		  $.ajax({
 				type:     "GET",
 				url:      uri, // <-- Here
@@ -1048,6 +1077,7 @@ function exSearch(){
 				success:function(data, textStatus, jqXHR){
 					var uri1 = jqXHR.uri1; 
 					var uri2 = jqXHR.uri2; 
+					//Kiem tra neu co quan he ngu nghia thi dua vao top
 					if(data['results']['bindings']!=undefined)
 					if(data['results']['bindings'].length>0){
 					var count = data['results']['bindings'][0]['count']['value'];
@@ -1120,14 +1150,15 @@ function exSearch(){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									$("#topsearch").append(str);									
+									if(img!="")
+										$("#topsearch").prepend(str);
+									else
+										$("#topsearch").append(str);								
 									} 
 								});	
 							}
 						}
 						});						
-					//$("#functionAResult").append(uri1+","+uri2+":");					
-					//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
 						query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 						//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
@@ -1149,10 +1180,10 @@ function exSearch(){
 									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"bb");
 									 if(countA==countAB){
 											$("#functionAResult").append(JSON.stringify(arrAB[0]));
-											for(var i=0;i<arrAB.length;i++){
+											//for(var i=0;i<arrAB.length;i++){
 												
-												relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
-											}
+											//	relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
+											//}
 											eraseCookie("RelateArr");
 											var json = JSON.stringify(relatedAB);
 											var expiration = new Date();
@@ -1169,11 +1200,10 @@ function exSearch(){
 									 } 
 								});	
 					}
-					
+				//Kiem tra neu khong co quan he ngu nghia thi dua vao all	
 					else{
 						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//$("#functionAResult").append(uri+"</br");
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
@@ -1239,7 +1269,10 @@ function exSearch(){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									$("#allsearch").append(str);									
+									if(img!="")
+										$("#allsearch").prepend(str);
+									else
+										$("#allsearch").append(str);								
 									} 
 								});	
 							}
@@ -1256,19 +1289,19 @@ function exSearch(){
 		
 });		
 	}
-else if(mode=="specification"){	
+	else if(mode=="specification"){		
 	var tmp="";
 	for(var i=1;i<res.length;i++)
 		if(i==1)
 			tmp=tmp+"{<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
 		else
 			tmp=tmp+" UNION {<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
-
 	var query = "SELECT distinct ?o WHERE {"+tmp+"}";
 	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 	var expiration = new Date();
-	expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+	expiration.setTime(expiration.getTime() + 10000000); //Expire after 10 seconds
 	setCookie("PivotKey",res[1],expiration);
+	//tim kiem cac thuoc tinh cua thuc the dau tien
 	$.ajax({
     type:     "GET",
     url:      uri, // <-- Here
@@ -1282,7 +1315,7 @@ else if(mode=="specification"){
 		$("#all_box").show();
 		
 		$("#keySA").fadeIn();
-		//loc ra cac thuc the la uri
+		//xac dinh cac thuoc tinh la thuc the hay URI
 		for(i=0;i<arr.length;i++){
 			if(arr[i]['o']['type']=="uri")
 				if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
@@ -1291,7 +1324,7 @@ else if(mode=="specification"){
 					pivot.push({key:tmp,value:tmp});
 				}
 		}
-		//Tinh trong so cua cac thuco tinh cua thuc the dau tien do
+		//Tinh trong so cua cac thuoc tinh cua thuc the dau tien do
 		for(i=1;i<res.length;i++){
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
@@ -1315,26 +1348,28 @@ else if(mode=="specification"){
 		if(res.length==2){
 		            var count2=0;
             var countb=0,counta=0;
-
 			for(var j=0;j<pivot.length;j++){
 			
 						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//$("#functionAResult").append(uri+"</br");
+				//Hien thi thong tin
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
 						dataType: "jsonp",
 						beforeSend: function (jqXHR) {
 								jqXHR.key = pivot[j].key;
+								jqXHR.mainName = resName[1];
 							},
 						success:function(data, textStatus, jqXHR){						
 						var key = jqXHR.key;
+						var mainName = jqXHR.mainName;
 						if(data == undefined) return;
 						var arr = data['results']['bindings'];
 							
 							
 						 for(var i=0;i<arr.length;i++){
+						 //xac dinh cac thuc the la film, tinh muc do diem so de goi y dua vao imdb
 						 if(arr[i]['url']['value'].search("imdb.com")!=-1){
 							var page = arr[i]["url"]["value"].replace("http://www.imdb.com/title/","");
 							page = page.replace("/","");
@@ -1349,9 +1384,9 @@ else if(mode=="specification"){
 										success:function(data, textStatus, jqXHR){
 											var x = parseInt(data["imdbRating"]);
 											arrIMDB.push({vote:x,page:arr[0]['url']['value'],key:jqXHR.key});
-											 //alert(JSON.stringify(arrIMDB.sort(sortStringDesc)));
 										}
 							});}
+						//hien thi thong tin chi tiet	
 							if(arr[i]['url']['value'].search("freebase")!=-1){
 								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
 								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
@@ -1360,38 +1395,45 @@ else if(mode=="specification"){
 									url:      uri, // <-- Here
 									dataType: 'json',
 									beforeSend: function (jqXHR) {
-													jqXHR.uri = uri;
-													jqXHR.key = key;
+										jqXHR.uri = uri;
+										jqXHR.key = key;
+										jqXHR.mainName = mainName;
 									},
 									success:function(data, textStatus, jqXHR){	
-									var name,img,type,des;
-												type="";
-									if(data.property['/type/object/name']!= undefined )
-													name = data.property['/type/object/name'].values[0].text;
-												else name="";
-												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
-												else type="...";
-												if(data.property['/common/topic/description']!= undefined )
-													des = data.property['/common/topic/description'].values[0].text;
-												else des="...";
-												  if(data.property['/common/topic/image']!= undefined )
-													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
-												else img=""; 
-												if(name!=""){
-										str = '<li><div class="post-info">'
+										var name,img,type,des;
+										type="";
+										if(data.property['/type/object/name']!= undefined )
+											name = data.property['/type/object/name'].values[0].text;
+										else name="";
+										if(data.property['/type/object/type']!= undefined ){
+											for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+												var tmp = data.property['/type/object/type'].values[k].text;
+												if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+												(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+												(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+													if(type=="")
+														type = type +"\""+ tmp +"\"";
+													else
+														type = type +"-\""+ tmp +"\"";
+											}
+										}
+										else type="...";
+										if(data.property['/common/topic/description']!= undefined )
+											des = data.property['/common/topic/description'].values[0].text;
+										else des="...";
+										if(data.property['/common/topic/image']!= undefined )
+											img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+										else img="";
+										
+										var why=jqXHR.key.replace("http://data.linkedmdb.org/resource/","");
+										var ind = parseInt(why.indexOf("\/"));
+										why = why.slice(0,ind)+" of "+jqXHR.mainName;
+										
+										if(name!=""){
+											str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
+											+'<h2>'+why+'</h2>'
 											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
@@ -1399,14 +1441,16 @@ else if(mode=="specification"){
 											+'</div>'
 											+'</div>'
 												+'</li>';
-											arrNameB.push({key:jqXHR.key,value:name});
+											arrNameB.push({key:jqXHR.key,value:name});	
 											}
 										else str="";
-									count2++;
-									if(count2==(pivot.length-1)){
 									
+									//Neu co nhieu hon mot bo phim thi sap xep theo thu tu giam dan de hien thi	
+									/*count2++;
+									if(count2==(pivot.length-1)){
 										if(arrIMDB.length>=2){
-											  for(var i=0;i<arrIMDB.length;i++)												for(var j=i+1;j<arrIMDB.length;j++)
+											  for(var i=0;i<arrIMDB.length;i++)												
+											  for(var j=i+1;j<arrIMDB.length;j++)
 												 if(arrIMDB[i].vote<arrIMDB[j].vote){
 														 var tmp = arrIMDB[i].vote;
 														arrIMDB[i].vote = arrIMDB[j].vote;
@@ -1470,13 +1514,20 @@ else if(mode=="specification"){
 											
 											 }
 									
-									}
-								
-								if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
+									}*/
+									
+									
+									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
 									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
 									(type.search("director")!=-1)||(type.search("producer")!=-1))
-								$("#topsearch").append(str); 
-								$("#allsearch").append(str);									
+										if(img!="")
+											$("#topsearch").prepend(str);
+										else
+											$("#topsearch").append(str);
+									if(img!="")
+										$("#allsearch").prepend(str);
+									else
+										$("#allsearch").append(str);								
 									} 
 								});	
 							}
@@ -1492,7 +1543,6 @@ else if(mode=="specification"){
 			
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {{?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}.{{?s ?o <"+pivot[j].key+">} UNION {<"+pivot[j].key+"> ?o ?s}}}";
 		uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-		//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
 		  $.ajax({
 				type:     "GET",
 				url:      uri, // <-- Here
@@ -1504,7 +1554,8 @@ else if(mode=="specification"){
 				success:function(data, textStatus, jqXHR){
 					var uri1 = jqXHR.uri1; 
 					var uri2 = jqXHR.uri2; 
-					if(data['results']!=undefined)
+					//Kiem tra neu co quan he ngu nghia thi dua vao top
+					if(data['results']['bindings']!=undefined)
 					if(data['results']['bindings'].length>0){
 					var count = data['results']['bindings'][0]['count']['value'];
 					arrAB.push({key:uri1,key1:uri2,value:count});
@@ -1576,14 +1627,15 @@ else if(mode=="specification"){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									$("#topsearch").append(str);									
+									if(img!="")
+										$("#topsearch").prepend(str);
+									else
+										$("#topsearch").append(str);								
 									} 
 								});	
 							}
 						}
 						});						
-					//$("#functionAResult").append(uri1+","+uri2+":");					
-					//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
 						query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 						//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
@@ -1605,15 +1657,18 @@ else if(mode=="specification"){
 									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"bb");
 									 if(countA==countAB){
 											$("#functionAResult").append(JSON.stringify(arrAB[0]));
-											for(var i=0;i<arrAB.length;i++){
+											//for(var i=0;i<arrAB.length;i++){
 												
-												relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
-											}
+											//	relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
+											//}
 											eraseCookie("RelateArr");
 											var json = JSON.stringify(relatedAB);
 											var expiration = new Date();
 											expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
 											setCookie("RelateArr",json,expiration);
+											/* for(var i=0;i<relatedAB.length;i++){
+												$("#functionAResult").append(relatedAB[i].key+relatedAB[i].key1+":"+relatedAB[i].value+"</br>");	
+											} */
 											
 										}
 									
@@ -1622,11 +1677,10 @@ else if(mode=="specification"){
 									 } 
 								});	
 					}
-					
+				//Kiem tra neu khong co quan he ngu nghia thi dua vao all	
 					else{
 						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//$("#functionAResult").append(uri+"</br");
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
@@ -1692,7 +1746,10 @@ else if(mode=="specification"){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									$("#allsearch").append(str);									
+									if(img!="")
+										$("#allsearch").prepend(str);
+									else
+										$("#allsearch").append(str);								
 									} 
 								});	
 							}
@@ -1716,6 +1773,7 @@ else if(mode=="specification"){
 
 function clearExSearch(){
 	document.getElementById("rawSAkey").innerHTML="";
+	document.getElementById("rawSAname").innerHTML="";
 	document.getElementById("keySA").innerHTML="";
 }
 </script>
@@ -1802,8 +1860,8 @@ $(document).ready(function(){
 			 
 
 		
-<div style="display:none" id="rawSAkey">
-</div>
+<div style="display:none" id="rawSAkey"></div>
+<div style="display:none" id="rawSAname"></div>
 <div id="functionAResult" style="display:"></div>
 <div id="functionABResult" style="display:"></div>
 
