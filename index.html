@@ -1,9 +1,6 @@
 
 <!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
+Author: Dinh Duy Thanh
 -->
 <!DOCTYPE HTML>
 <html>
@@ -17,45 +14,38 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-		
-alert = function(){};
-window.onerror=function(msg, url, linenumber){
- alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
- return true
-}
-function getAllType(){
+		alert = function(){};
+		window.onerror=function(msg, url, linenumber){
+			alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
+			return true
+		}
+		function getAllType(){
 			var arrType = [];
 			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
 			var query = "SELECT distinct ?o WHERE {?s rdf:type ?o}";	
 			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-			//alert(uri);
-							$.ajax({
-									type:     "GET",
-									url:      uri, // <-- Here
-									dataType: "jsonp",
-									beforeSend: function (jqXHR) {
-									},
-									success:function(data, textStatus, jqXHR){			
-									var arr = data['results']['bindings'];
-									 for(var i=0;i<arr.length;i++)
-										if(arr[i]['o']['value'].search("linkedmdb")!=-1){
-											var tmp = arr[i]['o']['value'].replace("http://data.linkedmdb.org/resource/movie/","");
-											tmp = tmp.replace("http://data.linkedmdb.org/resource/oddlinker/","");
-											
-											var tmp1 = tmp.replace(/_/g," ");
-											
-											arrType.push({key:tmp,value:tmp1});
-										}
-										
-										
-									$("#allType").html(JSON.stringify(arrType));
-									//alert($("#allType").html());
-									}
-								});			
+			$.ajax({
+				type:     "GET",
+				url:      uri, // <-- Here
+				dataType: "jsonp",
+				beforeSend: function (jqXHR) {
+				},
+				success:function(data, textStatus, jqXHR){			
+				var arr = data['results']['bindings'];
+				for(var i=0;i<arr.length;i++)
+					if(arr[i]['o']['value'].search("linkedmdb")!=-1){
+						var tmp = arr[i]['o']['value'].replace("http://data.linkedmdb.org/resource/movie/","");
+						tmp = tmp.replace("http://data.linkedmdb.org/resource/oddlinker/","");
+						var tmp1 = tmp.replace(/_/g," ");
+						arrType.push({key:tmp,value:tmp1});
+					}
+					$("#allType").html(JSON.stringify(arrType));
+				}
+			});			
 			
 		}
 		//	getAllType();
-</script>
+		</script>
 		<!----webfonts---->
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
 		<!----//webfonts---->
@@ -69,7 +59,8 @@ function getAllType(){
 			var $ = jQuery.noConflict();
 				$(function() {
 					$('#activator').click(function(){
-						$('#box').animate({'top':'0px'},500);
+						window.location = 'http://exploratorysearch.esy.es/';
+						//$('#box').animate({'top':'0px'},500);
 					});
 					$('#boxclose').click(function(){
 					$('#box').animate({'top':'-700px'},500);
@@ -583,7 +574,7 @@ function addExSearch(name,key,uri){
 	//$("#keySA").append(str);	
 	classname = key.replace("http://data.linkedmdb.org/resource/","");
 	classname = classname.replace("\/","_");
-	$("#bxslider").append('<li class="'+classname+'" draggable="true" onclick="showPopup1(\''+uri+'\',\''+key+'\');"> <img src="http://placehold.it/350x110/9b59b6/ffffff/&text='+decodeURIComponent(name)+'"></li>');
+	$("#bxslider").append('<li class="'+classname+'" onclick="showPopup1(\''+uri+'\',\''+key+'\');"> <img src="http://placehold.it/350x110/9b59b6/ffffff/&text='+decodeURIComponent(name)+'"></li>');
 	//var slider =  $("#bxslider").bxSlider();
 	slider.reloadSlider();
 }
@@ -617,7 +608,9 @@ function clearExSearch(){
 	document.getElementById("rawSAname").innerHTML="";
 	document.getElementById("keySA").innerHTML="";
 }
-function showPopup1(uri,key){
+function showPopup1(uri,key){	
+			$("#top-content-name").html('');
+			$("#cssmenu").fadeOut();
 		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -627,7 +620,7 @@ function showPopup1(uri,key){
 										jqXHR.key = key;
 									},
 				success:function(data,textStatus, jqXHR){
-				
+				$("#cssmenu").fadeIn();
 				var name,img,type,des;
 												type="";												
 				if(data.property['/type/object/name']!= undefined )
@@ -687,9 +680,7 @@ function showPopup1(uri,key){
 			}
 		});
 }
-
 function showPopup(uri){
-//var json = decodeURIComponent(value);
 
 $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		  /* var topic_id = '/guid/9202a8c04000641f8000000000034e87';
@@ -706,7 +697,7 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 				url:      uri, // <-- Here
 				dataType: 'json',
 				success:function(data){
-				
+				$("#cssmenu").fadeIn();
 				var name,img,type,des;
 												type="";												
 				if(data.property['/type/object/name']!= undefined )
@@ -754,6 +745,7 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 		bg.animate({opacity:0.2},0).fadeIn(500); 
 		obj.fadeIn(500).absoluteCenter(); 
 		btnClose.click(function(){
+			$("#cssmenu").fadeOut();
 			bg.fadeOut(500);
 			obj.fadeOut(500);
 		});
@@ -768,6 +760,8 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 }
 
 function showPopupEX(uri,key){
+		$("#top-content-name").html('');
+			$("#cssmenu").fadeOut();
 		$("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -782,6 +776,7 @@ function showPopupEX(uri,key){
 				//drawgraph1(jqXHR.key);
 				//}
 				//else
+					$("#cssmenu").fadeIn();
 					$("#popup-content").html("");
 				var name,img,type,des;
 												type="";												
@@ -936,8 +931,8 @@ function MaxAB(a,b){
 		return 0;
 	}
 
-function sortStringDesc(s1, s2){
-          return (s1>s2 ? -1 : (s1 < s2 ? 1 : 0));
+function sortStringDesc(a1, a2){
+          return (a1.value>a2.value ? -1 : (a1.value < a2.value ? 1 : 0));
      }
 	 
 function exSearch(type_ex){
@@ -953,10 +948,29 @@ function exSearch(type_ex){
 	var arrIMDB = [];
 	var countAB = 0;
 	var countA = 0;
-	
+			if(type_ex!=11&&type_ex!=10){
+			$("#startDepth").html("");
+				$("#rawtop").html("");
+				$("#rawfast").html("");
+				$("#rawrecommend").html("");
+				$("#topsearch").html('');
+				$("#fastsearch").html('');
+				$("#allsearch").html('');
+				}
 	str = document.getElementById("rawSAkey").innerHTML;
 	nameStr = $("#rawSAname").html();
-	var mode = $("#entities").val();	
+	var mode = $("#entities").val();
+	var	depth = $("#depth").val();
+	/*if(mode=="1"&&depth=="2"){
+		showPopupWating("Sorry! This feature is coming soon");
+		return;
+		return;
+	}
+	else if(mode=="2"&&depth=="2"){
+		showPopupWating("Sorry! This feature is coming soon");
+		return;
+		return;
+	}*/
 	var range = $("#range").val();
 	var check = document.getElementById("istest");
    // if(check.checked == true)
@@ -965,6 +979,7 @@ function exSearch(type_ex){
 		$('div#popup-bg').fadeOut(500);
 		$('div#popup').fadeOut(500);
 		}
+	
 	//str = " http://data.linkedmdb.org/resource/actor/29852 http://data.linkedmdb.org/resource/actor/29851";
 	//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
 	//neu khong add gi vao thi se yeu cau them dau vao
@@ -976,13 +991,20 @@ function exSearch(type_ex){
 	document.getElementById("more").style.display = 'none';
 	document.getElementById("abc").style.marginTop = "10%";
 	$("#abc").fadeOut();
-	$("#topsearch").html('');
-	$("#allsearch").html('');
+	
 
 
 	$("#loading").fadeIn("slow");
 	$("#keySA").fadeOut();
 	var res = str.split(" ");
+
+	if(type_ex==11&&res.length>=3){
+		res[1]=$("#depthKey").html();
+		res[2]=$("#depthKey1").html();
+	}if(type_ex==10){
+		res[1]=$("#depthKey").html();
+	}	
+		alert(JSON.stringify(res));
 	var resName = nameStr.split(":");
 	var query ="";
 	prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
@@ -996,14 +1018,17 @@ function exSearch(type_ex){
 	var tmp="";
 	$("#PivotKey").html('');
 		for(var i=1;i<res.length;i++){
+			if(i==3) break;
 			if(i==1)
 				tmp=tmp+"{<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
 			else
 				tmp=tmp+" UNION {<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
+				}
 		  query = "SELECT distinct ?o WHERE {"+tmp+"}";
 		  $("#PivotKey").append(" "+res[i]);
-		}	  
+			  
 	}
+	
 	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 	//tim kiem cac thuoc tinh cua thuc the dau tien
 	$.ajax({
@@ -1241,6 +1266,7 @@ function exSearch(type_ex){
 			}
 		}
 		//Neu co hai thuc the tro len thi thuc hien lan truyen
+		var countre=0;
 		if(res.length>2)
 		for(i=2;i<res.length;i++){
 			for(j=0;j<pivot.length;j++){
@@ -1258,15 +1284,20 @@ function exSearch(type_ex){
 				success:function(data, textStatus, jqXHR){
 					var uri1 = jqXHR.uri1; 
 					var uri2 = jqXHR.uri2; 
+					countre+=1;
+					if(countre==((res.length-2)*pivot.length))
+						alert("ok");
 					//Kiem tra neu co quan he ngu nghia thi dua vao top
 					if(data['results']['bindings']!=undefined)
 					if(data['results']['bindings'].length>0){
 					var count = data['results']['bindings'][0]['count']['value'];
 					arrAB.push({key:uri1,key1:uri2,value:count});
 					countAB+=1;			
-				query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
+					$("#fast_box").fadeIn();
+					//Dua vao fast box nhung thuc the co quan he, khong sap xep chung		
+						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//$("#functionAResult").append(uri+"</br");
+				//$("#functionAResult").append(uri+"tg</br");
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
@@ -1331,6 +1362,122 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
+									var rawtmp = $("#rawfast").html();
+										if(rawtmp.search(jqXHR.key)==-1){
+													
+													if(img!="")
+										$("#fastsearch").prepend(str);
+									else
+										$("#fastsearch").append(str);	
+													$("#rawfast").append(" "+jqXHR.key);
+													}							
+												} 
+																	
+									 
+								});	
+							}
+						}
+						});
+
+							//tinh toan quan he ngu nghia. can tinh so lan xuat hien cua cac property
+				query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+						if(getKeyValueArray(uri2,arrA)==0)
+						  $.ajax({
+								type:     "GET",
+								url:      uri, // <-- Here
+								dataType: "jsonp",
+								beforeSend: function (jqXHR) {
+										jqXHR.key = uri2;
+									},
+								success:function(data, textStatus, jqXHR){
+								if(data['results']['bindings']!=undefined)
+									if(data['results']['bindings'].length>0){	
+									var count = data['results']['bindings'][0]['count']['value'];
+									arrA.push({key:jqXHR.key,value:count});
+									countA +=1;
+									if(countA==countAB){
+										for(var i=0;i<arrAB.length;i++){
+											relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
+												
+										}
+										for(var i=0;i<relatedAB.length;i++)
+											for(var j=i+1;j<relatedAB.length;j++)
+												if(relatedAB[i].value<relatedAB[j].value){
+													var t = relatedAB[i];
+													relatedAB[i]=relatedAB[j];
+													relatedAB[j]=t;
+												}
+										alert(JSON.stringify(relatedAB));
+										if(depth==1)
+											for(var i=0;i<relatedAB.length;i++)
+											{
+												query = "SELECT * WHERE {<"+relatedAB[i].key1+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						async:false,
+						beforeSend: function (jqXHR) {
+								jqXHR.key = relatedAB[i].key1;
+							},
+						success:function(data, textStatus, jqXHR){
+						var key = jqXHR.key;
+						var arr = data['results']['bindings'];
+						 for(var i=0;i<arr.length;i++)
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									$("#keySA").fadeIn();
+									var name,img,type,des;
+												type="";
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
+												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+											}
+										else str="";
+										
 									var rawtmp = $("#rawtop").html();
 										if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -1347,36 +1494,115 @@ function exSearch(type_ex){
 							}
 						}
 						});						
-						query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
-						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-						//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
-						if(getKeyValueArray(uri2,arrA)==0)
-						  $.ajax({
-								type:     "GET",
-								url:      uri, // <-- Here
-								dataType: "jsonp",
-								beforeSend: function (jqXHR) {
-										jqXHR.key = uri2;
-									},
-								success:function(data, textStatus, jqXHR){
-									if(data['results']['bindings'].length>0){	
-									//$("#functionAResult").append(jqXHR.key+":");					
-									//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
-									var count = data['results']['bindings'][0]['count']['value'];
-									arrA.push({key:jqXHR.key,value:count});
-									countA +=1;
-									
-									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"</br>");
-									if(countA==countAB){
-											//$("#functionAResult").append(JSON.stringify(arrAB[0]));
-											for(var i=0;i<arrAB.length;i++){
-												
-												relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
+				
 											}
-											
-											var json = JSON.stringify(relatedAB);
+										else if(depth==2){
+									for(var i=0;i<relatedAB.length;i++)
+											{
+												query = "SELECT * WHERE {<"+relatedAB[i].key1+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						async:false,
+						beforeSend: function (jqXHR) {
+								jqXHR.key = relatedAB[i].key1;
+							},
+						success:function(data, textStatus, jqXHR){
+						var key = jqXHR.key;
+						var arr = data['results']['bindings'];
+						 for(var i=0;i<arr.length;i++)
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									$("#keySA").fadeIn();
+									var name,img,type,des;
+												type="";
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
+												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+											}
+										else str="";
+									var rawtmp = $("#rawtop").html();
+										if(rawtmp.search(jqXHR.key)==-1){
+													
+													if(img!="")
+										$("#topsearch").prepend(str);
+									else
+										$("#topsearch").append(str);	
+													$("#rawtop").append(" "+jqXHR.key);
+													}							
+												} 
+																	
+									 
+								});	
+							}
+						}
+						});	}
+										
+										if($("#startDepth").html()!="ok"){
+										//alert("acb"+relatedAB.length);
+											$("#depthKey").html('');
+											$("#depthKey1").html('');
+											if(relatedAB.length>=2){
+
+												$("#depthKey").append(relatedAB[0].key1);
+												$("#depthKey1").append(relatedAB[1].key1);
+												$("#startDepth").html("ok");
+												exSearch(11);
+											}
+											else if(relatedAB.length==1){
+												$("#depthKey").append(relatedAB[0].key1);
+												$("#startDepth").html("ok");
+												exSearch(10);
+											}
+											else return;	
+										}
+										}
+										var json = JSON.stringify(relatedAB);
 											$("#RelateArr").html(json);
-											
+											alert(json);
 										}
 									
 									}
@@ -1483,10 +1709,65 @@ function exSearch(type_ex){
 
 
 function showWhy(){
+showPopupWating("Sorry! This feature is coming soon");
+return;
 	$("#popup-content").fadeOut();
 	$("#popup-why").fadeIn();
 				
 			
+}
+
+function showPopupWating(string){
+		$("#top-content-name").html('');
+		$("#cssmenu").fadeOut();
+		$("#popup-name").html("Info");	
+		var str = '<div id="form-main">'
+		  +'<div id="form-div">'
+			+'<form class="form" id="form1">'
+			  
+			  +'<p class="name">'
+			+'	<input name="name" type="text" class="validate[required,custom[onlyLetter],length[0,100]] feedback-input" placeholder="Name" id="name" />'
+			 +' </p>'
+			  
+			 +' <p class="email">'
+			+'	<input name="email" type="text" class="validate[required,custom[email]] feedback-input" id="email" placeholder="Email" />'
+			 +' </p>'
+			  
+			+'  <p class="text">'
+			+'	<textarea name="text" class="validate[required,length[6,300]] feedback-input" id="comment" placeholder="What do you want for this feature"></textarea>'
+			+'  </p>'		  
+			  
+			+'  <div class="submit">'
+			+'	<input type="submit" value="SEND" id="button-blue"/>'
+			+'	<div class="ease"></div>'
+			+'  </div>'
+			+'</form>'
+		 +'</div>';
+		 str='<img src="http://placehold.it/350x110/9b59b6/ffffff/&text=abc">';
+		 str='	<div style="color:#d35400; font-size:20px; margin:2%;">Chatbox position Left Down. <br/>Share with us what you want we do for this feature.</div> <img style="margin-left:22%;" src="images/support.png"/>';
+		$("#popup-content").html(str);
+		$("#top-content-name").html(string);
+		//$("#popup-content-uri").html(jqXHR.key);
+
+				
+		var bg=$('div#popup-bg');
+		var obj=$('div#popup');
+		var btnClose=obj.find('#popup-close');
+		bg.animate({opacity:0.2},0).fadeIn(500); 
+		obj.fadeIn(500).absoluteCenter(); 
+		btnClose.click(function(){
+			bg.fadeOut(100);
+			obj.fadeOut(100);
+			$("#cssmenu").fadeIn();
+		});
+		bg.click(function(){
+			btnClose.click(); 
+		});
+		$(document).keydown(function(e){
+			if(e.keyCode==27){
+				btnClose.click(); 
+			}
+		});	
 }
 function hideWhy(){
 	$("#popup-content").fadeIn();
@@ -1515,26 +1796,7 @@ function hideWhy(){
 				<div class="nav-icon">
 					 <a href="#" class="right_bt" id="activator"><span> </span> </a>
 				</div>
-				 <div class="box" id="box">
-					 <div class="box_content">        					                         
-						<div class="box_content_center">
-						 	<div class="form_content">
-								<div class="menu_box_list">
-									<ul>
-										<li><a href="#"><span>home</span></a></li>
-										<li><a href="#"><span>About</span></a></li>
-										<li><a href="#"><span>Works</span></a></li>
-										<li><a href="#"><span>Clients</span></a></li>
-										<li><a href="#"><span>Blog</span></a></li>
-										<li><a href="contact.html"><span>Contact</span></a></li>
-										<div class="clear"> </div>
-									</ul>
-								</div>
-								<a class="boxclose" id="boxclose"> <span> </span></a>
-							</div>                                  
-						</div> 	
-					</div> 
-				</div>       	  
+      	  
 				<div class="top-searchbar" id="top_search" style="display:;">
 						<input placeholder="Enter text here..." id="text_search" type="text" onkeydown="if (event.keyCode == 13) search(10)"/><input onclick= "search(10);" type="button" value="" />
 						<div>
@@ -1593,6 +1855,10 @@ function hideWhy(){
 <div style="display:none" id="PivotKey"></div>
 <div id="functionAResult" style="display:"></div>
 <div id="functionABResult" style="display:"></div>
+<div id="depthKey" style="display:none"></div>
+<div id="depthKey1" style="display:none"></div>
+<div id="startDepth" style="display:none"></div>
+<script type='text/javascript'>window._sbzq||function(e){e._sbzq=[];var t=e._sbzq;t.push(["_setAccount",4305]);var n=e.location.protocol=="https:"?"https:":"http:";var r=document.createElement("script");r.type="text/javascript";r.async=true;r.src=n+"//static.subiz.com/public/js/loader.js";var i=document.getElementsByTagName("script")[0];i.parentNode.insertBefore(r,i)}(window);</script>
 
 <div id="popup-bg"></div>
 <div id="popup">
@@ -1600,7 +1866,7 @@ function hideWhy(){
 	<div id="top-content">
 		<div id="top-content-name"></div>
 		<div id="popup-content-uri" style="display:none"></div>
-		<div id='cssmenu'>
+		<div id='cssmenu' style="display:none">
 		<ul>
 		   <li><a href='#' onclick="hideWhy();"><span>Info</span></a></li>
 		   <li><a href='#' onclick="showWhy();"><span>Why it is recomended?</span></a></li>
@@ -1609,6 +1875,7 @@ function hideWhy(){
 		</ul>
 		</div>
 	</div>
+	<div class="fb-comments" data-href="http://exploratorysearch.esy.es/" data-numposts="3" data-colorscheme="dark"></div>
     <div id="popup-content" style="overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
 	
 	<div class="loading1">
@@ -1619,7 +1886,6 @@ function hideWhy(){
 							<div></div>
 						</div></div>
 	<div id="popup-why" style="display:">
-	<div id="popup-why-name" style="color:#d35400; font-size:20px; margin:2%;"></div>
 	<div id='canvas'></div>
 	</div>	
 </div>
@@ -1638,7 +1904,17 @@ function hideWhy(){
 				  <div id="cache_exsearch" style="display:none;">
 					</br>
 					</br>
+					</br>
 				  </div>
+				  
+<div id="searchloading" style="display:none"></div>
+				  <div class="box_search" id ="fast_box" style ="display:none; overflow:hidden;">
+							<h4 style ="background:#3498db;">FAST</h4>
+							<div id ="fastsearch" style="overflow-y: scroll; overflow-x:hidden; width:700px; height:400px;">
+						
+							</div>
+							<div id="rawfast" style ="display:none;"></div>
+						</div> 
 				  <div class="box_search" id ="top_box" style ="display:none; overflow:hidden;">
 							<h4 style ="background:#E74C3C;">TOP</h4>
 							<div id ="topsearch" style="overflow-y: scroll; overflow-x:hidden; width:700px; height:400px;">
