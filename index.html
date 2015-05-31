@@ -574,7 +574,7 @@ function addExSearch(name,key,uri){
 	//$("#keySA").append(str);	
 	classname = key.replace("http://data.linkedmdb.org/resource/","");
 	classname = classname.replace("\/","_");
-	$("#bxslider").append('<li class="'+classname+'" onclick="showPopup1(\''+uri+'\',\''+key+'\');"> <img src="http://placehold.it/350x110/9b59b6/ffffff/&text='+decodeURIComponent(name)+'"></li>');
+	$("#bxslider").append('<li class="'+classname+'" onclick="showPopupSimple(\''+uri+'\',\''+key+'\');"> <img src="http://placehold.it/350x110/9b59b6/ffffff/&text='+decodeURIComponent(name)+'"></li>');
 	//var slider =  $("#bxslider").bxSlider();
 	slider.reloadSlider();
 }
@@ -621,6 +621,7 @@ function showPopup1(uri,key){
 									},
 				success:function(data,textStatus, jqXHR){
 				$("#cssmenu").fadeIn();
+				$("#cssmenuWhy").hide();
 				var name,img,type,des;
 												type="";												
 				if(data.property['/type/object/name']!= undefined )
@@ -776,7 +777,8 @@ function showPopupEX(uri,key){
 				//drawgraph1(jqXHR.key);
 				//}
 				//else
-					$("#cssmenu").fadeIn();
+					$("#cssmenu").fadeIn();					
+					$("#cssmenuWhy").show();
 					$("#popup-content").html("");
 				var name,img,type,des;
 												type="";												
@@ -842,48 +844,69 @@ function showPopupEX(uri,key){
 			
 }
 
-function showPopupSimple(key){
-		//key = "http://data.linkedmdb.org/resource/actor/29625";
-			$("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');	
-		  $.ajax({
-				type:"get",
-				url:"src/draw_graph.php",
-				data:"key="+key,
-				async:true,
-				success:function(kq){
-				var json = decodeURIComponent(kq);
-				$("#popup-content").html("<div id='canvas'></div>");
-				drawgraph1(json);
-				//$("#popup-content").append(json);
-				//$("#keySA").fadeIn();	
-				//var tmp = document.getElementById("abc").innerHTML;
-				//document.getElementById("abc").innerHTML = tmp + kq;				
-				//$("#abc").append(kq);
+function showPopupSimple(uri,key){
+		$("#top-content-name").html('');
+			$("#cssmenu").fadeOut();
+		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
+		   $.ajax({
+				type:     "GET",
+				url:      uri, // <-- Here
+				dataType: 'json',
+								beforeSend: function (jqXHR) {
+										jqXHR.key = key;
+									},
+				success:function(data,textStatus, jqXHR){
+				$("#cssmenu").fadeIn();
+				$("#cssmenuWhy").hide();
+				$("#cssmenuDelete").show();
+				var name,img,type,des;
+												type="";												
+				if(data.property['/type/object/name']!= undefined )
+					name = data.property['/type/object/name'].values[0].text;
+				else name="";
+				if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
+				else type="...";
+				if(data.property['/common/topic/description']!= undefined )
+					des = data.property['/common/topic/description'].values[0].value;
+				else des="...";
+				if(data.property['/common/topic/image']!= undefined )
+													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
+												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+				if(name!="")
+					str = '<li><div class="post-info">'
+					+img
+					+'<div class="post-basic-info">'
+					+'	<span><a href="#">'+type+'</a></span>'
+					+'	<p>'+des+'</p>'
+					+'</div>'
+					+'</div>'
+					+'</li>';
+					else str="";
+				$("#popup-name").html(name);	
+				$("#popup-content").html(str);
+				$("#top-content-name").html(name);
+				$("#popup-content-uri").html(jqXHR.key);
+				drawgraph();
 				}
-				})
-		  
-		  $.ajax({
-				type:"get",
-				url:"src/searchpage.php",
-				data:"key="+key,
-				async:true,
-				success:function(kq){
-				//$("#popup-content").html("<div id='canvas'></div>");
-				//drawgraph();
-				$("#popup-content").append(kq);
-				//$("#keySA").fadeIn();	
-				//var tmp = document.getElementById("abc").innerHTML;
-				//document.getElementById("abc").innerHTML = tmp + kq;				
-				//$("#abc").append(kq);
-				}
-				})	
-			
+				});	
 		var bg=$('div#popup-bg');
 		var obj=$('div#popup');
 		var btnClose=obj.find('#popup-close');
 		bg.animate({opacity:0.2},0).fadeIn(500); 
-		obj.fadeIn(500).draggable({cursor:'move',handle:'#popup-header'}).absoluteCenter(); 
+		obj.fadeIn(500).absoluteCenter(); 
 		btnClose.click(function(){
+			$("#cssmenuDelete").fadeOut(500);
 			bg.fadeOut(500);
 			obj.fadeOut(500);
 		});
@@ -1037,11 +1060,11 @@ function exSearch(type_ex){
     dataType: "jsonp",
     success: function(data){						
 		var arr = data['results']['bindings'];
-	   $("#loading").fadeOut("slow");
-	   $("#abc").fadeIn();
-	   
-		$("#top_box").show();
-		$("#all_box").show();
+	   //$("#loading").fadeOut("slow");
+	   //$("#abc").fadeIn();
+	
+		//$("#top_box").show();
+		//$("#all_box").show();
 		
 		$("#keySA").fadeIn();
 		//xac dinh cac thuoc tinh la thuc the hay URI
@@ -1094,9 +1117,7 @@ function exSearch(type_ex){
 						var key = jqXHR.key;
 						var mainName = jqXHR.mainName;
 						if(data == undefined) return;
-						var arr = data['results']['bindings'];
-							
-							
+						var arr = data['results']['bindings'];						
 						 for(var i=0;i<arr.length;i++){
 						 //xac dinh cac thuc the la film, tinh muc do diem so de goi y dua vao imdb
 						 if(arr[i]['url']['value'].search("imdb.com")!=-1){
@@ -1245,7 +1266,10 @@ function exSearch(type_ex){
 									
 									}*/
 									
-									
+									$("#loading").fadeOut("slow");
+									   $("#abc").fadeIn();
+										$("#top_box").fadeIn();
+										$("#all_box").fadeIn();
 									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
 									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
 									(type.search("director")!=-1)||(type.search("producer")!=-1))
@@ -1293,7 +1317,7 @@ function exSearch(type_ex){
 					var count = data['results']['bindings'][0]['count']['value'];
 					arrAB.push({key:uri1,key1:uri2,value:count});
 					countAB+=1;			
-					$("#fast_box").fadeIn();
+					
 					//Dua vao fast box nhung thuc the co quan he, khong sap xep chung		
 						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
@@ -1362,6 +1386,9 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
+										$("#loading").fadeOut("slow");
+										   $("#abc").fadeIn();
+											$("#fast_box").fadeIn();
 									var rawtmp = $("#rawfast").html();
 										if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -1477,7 +1504,9 @@ function exSearch(type_ex){
 											arrNameB.push({key:jqXHR.key,value:name});
 											}
 										else str="";
-										
+										$("#abc").fadeIn();
+										$("#loading").fadeOut("slow");
+										$("#top_box").fadeIn();
 									var rawtmp = $("#rawtop").html();
 										if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -1564,6 +1593,9 @@ function exSearch(type_ex){
 											arrNameB.push({key:jqXHR.key,value:name});
 											}
 										else str="";
+										$("#loading").fadeOut("slow");
+										$("#abc").fadeIn();
+										$("#top_box").fadeIn();
 									var rawtmp = $("#rawtop").html();
 										if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -1679,6 +1711,9 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
+										$("#loading").fadeOut("slow");
+										$("#abc").fadeIn();
+										$("#all_box").fadeIn();
 										var rawtmp = $("#rawrecommend").html();
 										if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -1869,9 +1904,9 @@ function hideWhy(){
 		<div id='cssmenu' style="display:none">
 		<ul>
 		   <li><a href='#' onclick="hideWhy();"><span>Info</span></a></li>
-		   <li><a href='#' onclick="showWhy();"><span>Why it is recomended?</span></a></li>
+		   <li><a href='#' id = "cssmenuWhy" onclick="showWhy();"><span>Why it is recomended?</span></a></li>
 		   <li><a href='#' onclick="exSearch(1);"><span>Run an exploration</span></a></li>
-		   <li><a href='#' style="background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
+		   <li><a href='#' id = "cssmenuDelete" style="display:none;background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
 		</ul>
 		</div>
 	</div>
