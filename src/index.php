@@ -1,4 +1,6 @@
-
+<?php
+session_start();
+?>
 <!--
 Author: W3layouts
 Author URL: http://w3layouts.com
@@ -9,7 +11,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <html>
 	<head>
 		<title>Expolatory Search</title>
-		<meta http-equiv=Content-Type content ="text/html"; charset="utf-8">
 		<link href="css/style.css" rel='stylesheet' type='text/css' />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="shortcut icon" type="image/x-icon" href="images/fav-icon.png" />
@@ -17,44 +18,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-		
-alert = function(){};
+
 window.onerror=function(msg, url, linenumber){
  alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
  return true
 }
-function getAllType(){
-			var arrType = [];
-			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
-			var query = "SELECT distinct ?o WHERE {?s rdf:type ?o}";	
-			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-			//alert(uri);
-							$.ajax({
-									type:     "GET",
-									url:      uri, // <-- Here
-									dataType: "jsonp",
-									beforeSend: function (jqXHR) {
-									},
-									success:function(data, textStatus, jqXHR){			
-									var arr = data['results']['bindings'];
-									 for(var i=0;i<arr.length;i++)
-										if(arr[i]['o']['value'].search("linkedmdb")!=-1){
-											var tmp = arr[i]['o']['value'].replace("http://data.linkedmdb.org/resource/movie/","");
-											tmp = tmp.replace("http://data.linkedmdb.org/resource/oddlinker/","");
-											
-											var tmp1 = tmp.replace(/_/g," ");
-											
-											arrType.push({key:tmp,value:tmp1});
-										}
-										
-										
-									$("#allType").html(JSON.stringify(arrType));
-									//alert($("#allType").html());
-									}
-								});			
-			
-		}
-		//	getAllType();
 </script>
 		<!----webfonts---->
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
@@ -104,7 +72,7 @@ function getAllType(){
 					return true;
 				return false;
 	}
-		
+
 	//mo rong truy van voi uri va kieu dau vao
 		function getInfoFromType(key, type){
 		if(type=="movie:film"){
@@ -112,32 +80,7 @@ function getAllType(){
 			var ind = parseInt(type.indexOf("\/"));
 			type = type.slice(0,ind);
 			type="movie:"+type;
-			//alert(type+key);
-		}
-		//thay doi noi dung
-		if(type=="movie:content_rating"){
-			type="movie:rating";
-		}
-		if(type=="movie:country"){
-			type="oddlinker:link_source";
-		}
-		if(type=="movie:film_costume_designer"){
-			type="movie:costume_designer";
-		}
-		if(type=="movie:film_crew_gig"){
-			type="movie:film_crew_gig_film";
-		}
-		if(type=="movie:film_genre"){
-			type="movie:genre";
-		}
-		if(type=="movie:film_crew_gig_film_job"){
-			type="movie:film_job";
-		}
-		if(type=="movie:film_location"){
-			type="movie:featured_film_location";
-		}
-		if(type=="movie:special_film_performance_type"){
-			type=="movie:performance_special_performance_type";
+			alert(type+key);
 		}
 			prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
 			var query = "SELECT * WHERE {{<"+key+"> "+type+" ?s}UNION{?s "+type+"<"+key+"> }. ?s foaf:page ?url}";	
@@ -174,37 +117,30 @@ function getAllType(){
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;
-												type="";												
+												var name,img,type,des;												
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
+														type = "\""+data.property['/type/object/type'].values[0].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
 												else des="";
 												  if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage"/></div>'; 
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+													//img =data.property['/common/topic/image']['values'][0]['id'];
+												else img=""; 
 												//img = ""; 
 												//img = data.property['/type/object/name'].values[0].text;
 												if(name!=""&&des!="")
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
-														+'	<h3><a href="#" onclick="showPopup1(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+name+'</a>'
 														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 														+'	<p>'+des+'</p>'
@@ -213,11 +149,8 @@ function getAllType(){
 												+'</li>';
 												else str="";
 													$("#top_box").show();
-													var rawtmp = $("#rawtop").html();
-													if(rawtmp.search(jqXHR.key)==-1){													
 													$("#topsearch").prepend(str);
-													$("#rawtop").append(" "+jqXHR.key);
-													}											
+																								
 												} 
 											});	 
 										}
@@ -226,9 +159,67 @@ function getAllType(){
 				
 		}
 		
-	//
-		function readEqualEntity(data,arrType){
-			$("#abc").fadeIn("slow");
+		//Phan tich va tim kiem thuc the
+			function search(type){
+			$("#loading").fadeIn("slow");
+			
+				$("#topsearch").html("");			
+				$("#allsearch").html("");
+				document.getElementById("abc").style.display = 'none';
+				str = document.getElementById("text_search").value;
+		
+				prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
+				var arrKey = [];
+				var arrType = [];
+				var res = str.split(" ");
+				var count=0;
+				for(var i=0;i<res.length;i++){
+					if(i+2<res.length)
+						arrKey.push({key:count++,value:res[i]+" "+res[i+1]+" "+res[i+2]});
+					if(i+1<res.length)
+						arrKey.push({key:count++,value:res[i]+" "+res[i+1]});
+					arrKey.push({key:count++,value:res[i]});	
+				}
+				//module mo rong tu tim kiem voi cac tu khoa de xac dinh kieu
+				for(var i=0;i<arrKey.length;i++){
+				if(checkStopWord(arrKey[i].value)) continue;
+					if(arrKey[i].value == "actor"){
+						arrType.push({type:"movie:actor"});
+					}
+					if(arrKey[i].value == "film"){
+						arrType.push({type:"movie:film"});
+					}
+					if(arrKey[i].value == "editor"){
+						arrType.push({type:"movie:editor"});
+					}
+					if(arrKey[i].value == "director"){
+						arrType.push({type:"movie:director"});
+					}
+					if(arrKey[i].value == "writer"){
+						arrType.push({type:"movie:writer"});
+					}
+					if(arrKey[i].value == "producer"){
+						arrType.push({type:"movie:producer"});
+					}
+				}
+				//tim kiem thuc the
+				for(var i=0;i<arrKey.length;i++){
+				if(checkStopWord(arrKey[i].value)) continue;
+				//	Tim kiem thuc the chinh xac
+			    var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url}";		
+				
+						var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+							$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: "jsonp",
+									beforeSend: function (jqXHR) {
+													jqXHR.key = arrKey[i].value;
+									},
+									success:function(data, textStatus, jqXHR){	
+									
+									document.getElementById("loading").style.display = 'none';
+									$("#abc").fadeIn("slow");
 									$(".alert-box").fadeOut();
 								 		var arr = data['results']['bindings'];
 									 for(var i=0;i<arr.length;i++)
@@ -247,137 +238,49 @@ function getAllType(){
 												dataType: 'json',
 												beforeSend: function (jqXHR) {
 																jqXHR.key = arr[i]['s']['value'];
-																jqXHR.name = arr[i]['label']['value'];
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;
-												type="";
+												var name,img,type,des;												
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
+														type = "\""+data.property['/type/object/type'].values[0].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[1].text+"\""
+														+"-"+"\""+data.property['/type/object/type'].values[2].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
 												else des="";
 												  if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+													//img =data.property['/common/topic/image']['values'][0]['id'];
+												else img=""; 
+												//img = ""; 
+												//img = data.property['/type/object/name'].values[0].text;
 												if(name!=""&&des!="")
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
-														+'	<h3><a href="#" onclick="showPopup1(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+jqXHR.name+'</a>'
+														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+name+'</a>'
 														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 														+'	<p>'+des+'</p>'
 														+'</div>'
 													+'</div>'
 												+'</li>';
-												else if(name.search("character"))
-													str = '<li><div class="post-info">'
-														+img
-														+'<div class="post-basic-info">'
-														+'	<h3><a href="#" onclick="showPopup1(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+jqXHR.name+'</a>'
-														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(jqXHR.name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
-														+'	<span><a href="#"><label> </label>\"Film character\"</a></span>'
-														+'	<p>...</p>'
-														+'</div>'
-													+'</div>'
-												+'</li>';
 												else str="";
 												
 													$("#top_box").show();
-													var rawtmp = $("#rawtop").html();
-													if(rawtmp.search(jqXHR.key)==-1){
-													if(img!="")
-														$("#topsearch").prepend(str);
-													else
-														$("#topsearch").append(str);
-													$("#rawtop").append(" "+jqXHR.key);
-													//alert(jqXHR.key);
-													}
+													$("#topsearch").append(str);
 																					
 												} 
 											});	 
-										
-		}
-		}
-		//Phan tich va tim kiem thuc the
-			function search(type){
-			
-			$("#loading").fadeIn("slow");
-			
-				$("#topsearch").html("");			
-				$("#allsearch").html("");
-				$("#rawtop").html("");
-				$("#rawrecommend").html("");
-				document.getElementById("abc").style.display = 'none';
-				str = document.getElementById("text_search").value;
-				prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
-				var arrKey = [];
-				var arrType = [];
-				var res = str.split(" ");
-				var count=0;
-				for(var i=0;i<res.length;i++){
-					if(i+2<res.length)
-						arrKey.push({key:count++,value:res[i]+" "+res[i+1]+" "+res[i+2]});
-					if(i+1<res.length)
-						arrKey.push({key:count++,value:res[i]+" "+res[i+1]});
-						if(res[i]!="film")
-					arrKey.push({key:count++,value:res[i]});	
-				}
-				//module mo rong tu tim kiem voi cac tu khoa de xac dinh kieu
-				var json = $("#allType").html();
-				var arrTypeInput = JSON.parse(json);
-				//alert(JSON.stringify(arrType));
-				for(var j=0;j<arrTypeInput.length;j++)
-					for(var i=0;i<arrKey.length;i++){
-						if(checkStopWord(arrKey[i].value)) continue;
-						
-							if(arrTypeInput[j].value.search(arrKey[i].value)!=-1){
-								arrType.push({type:"movie:"+arrTypeInput[j].key});
-							}
-				}
-				//alert(JSON.stringify(arrTypeInput.length));
-				//alert(arrType.length);
-				//tim kiem thuc the
-				for(var i=0;i<arrKey.length;i++){
-				if(checkStopWord(arrKey[i].value)) continue;
-				//	Tim kiem thuc the chinh xac	
-			  // var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'}";
-			 //  for(var k=0;k<arrTypeInput.length;k++)
-			//	var query = query+" UNION {?s movie:"+arrTypeInput[k].key+"_name '"+arrKey[i].value+"'}";
-			 //  query = query +"}. ?s foaf:page ?url.?s rdfs:label ?label}";
-			  var query = "SELECT * WHERE { {{?s dc:title '"+arrKey[i].value+"'} UNION {?s movie:actor_name '"+arrKey[i].value+"'} UNION {?s movie:editor_name '"+arrKey[i].value+"'} UNION {?s movie:director_name '"+arrKey[i].value+"'} UNION {?s movie:writer_name '"+arrKey[i].value+"'} UNION {?s movie:producer_name '"+arrKey[i].value+"'} UNION {?s movie:film_character_name '"+arrKey[i].value+"'} UNION {?s movie:film_genre_name '"+arrKey[i].value+"'}}. ?s foaf:page ?url.?s rdfs:label ?label}";		
-			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-			//$("#functionAResult").html(query);
-							$.ajax({
-									type:     "GET",
-									url:      uri, // <-- Here
-									dataType: "jsonp",
-									beforeSend: function (jqXHR) {
-													jqXHR.key = arrKey[i].value;
-									},
-									success:function(data, textStatus, jqXHR){									
-									document.getElementById("loading").style.display = 'none';
-									readEqualEntity(data,arrType);
-									}
-									  
+										}
+									 } 
 								});	
-								
 	
 				//tim kiem thuc the mo rong
 				var query = "SELECT * WHERE { ?s rdfs:label ?o . FILTER regex(?o, '"+res[i]+"','i'). ?s foaf:page ?url} limit 16";	
@@ -412,37 +315,33 @@ function getAllType(){
 																jqXHR.uri = uri;
 												},
 												success:function(data, textStatus, jqXHR){	
-												var name,img,type,des;
-												type="";												
+												var name,img,type,des;												
 												if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
 												else des="...";
-												if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+													//img =data.property['/common/topic/image']['values'][0]['id'];
+												else img=""; 
 												//img = ""; 
 												//img = data.property['/type/object/name'].values[0].text;
 												if(name!="")
 												str = '<li><div class="post-info">'
 														+img
 														+'<div class="post-basic-info">'
-														+'	<h3><a href="#" onclick="showPopup1(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+														+'	<h3><a href="#" onclick="showPopup(\''+jqXHR.uri+'\');" >'+name+'</a>'
 														+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 														+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 														+'	<p>'+des+'</p>'
@@ -451,15 +350,7 @@ function getAllType(){
 												+'</li>';
 												else str="";
 												$("#all_box").show();
-												var rawtmp = $("#rawrecommend").html();
-													if(rawtmp.search(jqXHR.key)==-1){
-													
-													if(img!="")
-														$("#allsearch").prepend(str);
-													else
-														$("#allsearch").append(str);	
-													$("#rawrecommend").append(" "+jqXHR.key);
-													}							
+												$("#allsearch").append(str);									
 												} 
 											});	 
 										}
@@ -476,7 +367,7 @@ function getAllType(){
 			}
 			
 			
-	
+			
 			function searchType(key,type){
 				$("#loading").fadeIn("slow");
 				//$("#keySA").html("");
@@ -509,13 +400,11 @@ function getAllType(){
 				}
 				})
 			}
-
-			</script>
+</script>
 
 <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 <script language="javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-<script language="javascript" >
-var slider;
+<script language="javascript">
 $(document).ready(function(){
 	(function($){
 		$.fn.absoluteCenter = function(){
@@ -553,26 +442,13 @@ $(document).ready(function(){
 		});
 		return false;
 	});
-	
-	           slider = $("#bxslider").bxSlider({
-    slideWidth: 200,
-    minSlides: 2,
-    maxSlides: 3,
-    slideMargin: 10
-  });
 });
 
 function addExSearch(name,key,uri){
-	$("#UI_EX").fadeIn();
-	$("#cache_exsearch").fadeIn();
-	$("#bxslider-list").fadeIn();
 	tmp = document.getElementById("rawSAkey").innerHTML;
-	if(encodeURIComponent(tmp)=="%0A"){
+	if(encodeURIComponent(tmp)=="%0A")
 		$("#rawSAkey").html('');
-		$("#rawSAname").html('');
-	}
 	$("#rawSAkey").append(" "+key);
-	$("#rawSAname").append(":"+decodeURIComponent(name));
 	str = '<li ><span id="popup-close" title="Close">x</span> <div class="image_title">'+
 				'<a href="#" onclick="showPopup(\''+uri+'\');">'+decodeURIComponent(name)+'</a>'+
 			'</div>'+
@@ -580,114 +456,8 @@ function addExSearch(name,key,uri){
 				'<img src="images/3yiC6Yq.jpg"/>'+
 			'</a>'+
 		'</li>';	
-	//$("#keySA").append(str);	
-	classname = key.replace("http://data.linkedmdb.org/resource/","");
-	classname = classname.replace("\/","_");
-	$("#bxslider").append('<li class="'+classname+'" draggable="true" onclick="showPopup1(\''+uri+'\',\''+key+'\');"> <img src="http://placehold.it/350x110/9b59b6/ffffff/&text='+decodeURIComponent(name)+'"></li>');
-	//var slider =  $("#bxslider").bxSlider();
-	slider.reloadSlider();
+	$("#keySA").append(str);		
 }
-function deleteKeyExSearch(){
-
-	if(slider.getSlideCount()==1){
-		clearExSearch();
-		$('div#popup-bg').fadeOut(500);
-		$('div#popup').fadeOut(500);
-		return;
-	}
-	var key = $("#popup-content-uri").html();
-	var tmp = $("#rawSAkey").html();
-	tmp = tmp.replace(" "+key,"");
-	$("#rawSAkey").html(tmp);
-	//alert($("#rawSAkey").html());
-	var classname = key.replace("http://data.linkedmdb.org/resource/","");
-	classname = "."+classname.replace("\/","_");
-	$('div#popup-bg').fadeOut(500);
-	$('div#popup').fadeOut(500);
-	$(classname).remove();
-	slider.reloadSlider();
-}
-function clearExSearch(){
-	$("#UI_EX").fadeOut();
-	$("#cache_exsearch").fadeOut();
-	$("#bxslider-list").fadeOut();
-	slider.destroySlider();
-	$("#bxslider").html("");
-	document.getElementById("rawSAkey").innerHTML="";
-	document.getElementById("rawSAname").innerHTML="";
-	document.getElementById("keySA").innerHTML="";
-}
-function showPopup1(uri,key){
-		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
-		   $.ajax({
-				type:     "GET",
-				url:      uri, // <-- Here
-				dataType: 'json',
-								beforeSend: function (jqXHR) {
-										jqXHR.key = key;
-									},
-				success:function(data,textStatus, jqXHR){
-				
-				var name,img,type,des;
-												type="";												
-				if(data.property['/type/object/name']!= undefined )
-					name = data.property['/type/object/name'].values[0].text;
-				else name="";
-				if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
-				else type="...";
-				if(data.property['/common/topic/description']!= undefined )
-					des = data.property['/common/topic/description'].values[0].value;
-				else des="...";
-				if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
-				if(name!="")
-					str = '<li><div class="post-info">'
-					+img
-					+'<div class="post-basic-info">'
-					+'	<span><a href="#">'+type+'</a></span>'
-					+'	<p>'+des+'</p>'
-					+'</div>'
-					+'</div>'
-					+'</li>';
-					else str="";
-				$("#popup-name").html(name);	
-				$("#popup-content").html(str);
-				$("#top-content-name").html(name);
-				$("#popup-content-uri").html(jqXHR.key);
-				drawgraph();
-				}
-				});	
-		var bg=$('div#popup-bg');
-		var obj=$('div#popup');
-		var btnClose=obj.find('#popup-close');
-		bg.animate({opacity:0.2},0).fadeIn(500); 
-		obj.fadeIn(500).absoluteCenter(); 
-		btnClose.click(function(){
-			bg.fadeOut(500);
-			obj.fadeOut(500);
-		});
-		bg.click(function(){
-			btnClose.click(); 
-		});
-		$(document).keydown(function(e){
-			if(e.keyCode==27){
-				btnClose.click(); 
-			}
-		});
-}
-
 function showPopup(uri){
 //var json = decodeURIComponent(value);
 
@@ -706,53 +476,39 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 				url:      uri, // <-- Here
 				dataType: 'json',
 				success:function(data){
-				
-				var name,img,type,des;
-												type="";												
+				var name,img,type,des;												
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
+				if(data.property['/type/object/type']!= undefined )
+					type = data.property['/type/object/type'].values[0].text;
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
 				else des="...";
 				if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+				img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+				else img=""; 
 				if(name!="")
 					str = '<li><div class="post-info">'
 					+img
 					+'<div class="post-basic-info">'
-					+'	<span><a href="#">'+type+'</a></span>'
+					+'	<h3><a href="#" >'+name+'</a>'
+					+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 					+'	<p>'+des+'</p>'
 					+'</div>'
 					+'</div>'
 					+'</li>';
 					else str="";
-				$("#popup-name").html(name);	
 				$("#popup-content").html(str);
-				$("#top-content-name").html(name);
-
-				drawgraph();
 				}
-				});	
+				});	 
+				
 		var bg=$('div#popup-bg');
 		var obj=$('div#popup');
 		var btnClose=obj.find('#popup-close');
 		bg.animate({opacity:0.2},0).fadeIn(500); 
-		obj.fadeIn(500).absoluteCenter(); 
+		obj.fadeIn(500).draggable({cursor:'move',handle:'#popup-header'}).absoluteCenter(); 
 		btnClose.click(function(){
 			bg.fadeOut(500);
 			obj.fadeOut(500);
@@ -776,54 +532,36 @@ function showPopupEX(uri,key){
 				beforeSend: function (jqXHR) {
 					jqXHR.key = key;
 				},
-				success:function(data, textStatus, jqXHR){				
-				//if(jqXHR.key!=""){
-				//$("#popup-content").html("<div id='canvas'></div>");
-				//drawgraph1(jqXHR.key);
-				//}
-				//else
-					$("#popup-content").html("");
-				var name,img,type,des;
-												type="";												
+				success:function(data, textStatus, jqXHR){
+				$("#popup-content").html("<div id='canvas'></div>");
+				var json = getCookie("RelateArr");
+				//var xxx = JSON.parse(json_str);
+				drawgraph1(json,jqXHR.key);
+				var name,img,type,des;												
 				if(data.property['/type/object/name']!= undefined )
 					name = data.property['/type/object/name'].values[0].text;
 				else name="";
-				if(data.property['/type/object/type']!= undefined ){
-					for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-						var tmp = data.property['/type/object/type'].values[k].text;
-						if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-						(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-						(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-							if(type=="")
-								type = type +"\""+ tmp +"\"";
-							else
-								type = type +"-\""+ tmp +"\"";
-					}
-				}
+				if(data.property['/type/object/type']!= undefined )
+					type = data.property['/type/object/type'].values[0].text;
 				else type="...";
 				if(data.property['/common/topic/description']!= undefined )
 					des = data.property['/common/topic/description'].values[0].value;
 				else des="...";
 				if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
-
+				img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+				else img=""; 
 				if(name!="")
 					str = '<li><div class="post-info">'
 					+img
 					+'<div class="post-basic-info">'
-					+'	<span><a href="#">'+type+'</a></span>'
+					+'	<h3><a href="#" >'+name+'</a>'
+					+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 					+'	<p>'+des+'</p>'
 					+'</div>'
 					+'</div>'
 					+'</li>';
 					else str="";
-				$("#popup-name").html(name);	
-				$("#popup-content").html(str);
-				$("#top-content-name").html(name);
-				$("#popup-why-name").html("Why "+name+" is recomended?");
-				$("#popup-content-uri").html(jqXHR.key);
-				drawgraph();
+				$("#popup-content").append(str);
 				}
 				});	 
 				
@@ -831,7 +569,7 @@ function showPopupEX(uri,key){
 		var obj=$('div#popup');
 		var btnClose=obj.find('#popup-close');
 		bg.animate({opacity:0.2},0).fadeIn(500); 
-		obj.fadeIn(500).absoluteCenter(); 
+		obj.fadeIn(500).draggable({cursor:'move',handle:'#popup-header'}).absoluteCenter(); 
 		btnClose.click(function(){
 			bg.fadeOut(500);
 			obj.fadeOut(500);
@@ -935,12 +673,44 @@ function MaxAB(a,b){
 				return arr[i].value;
 		return 0;
 	}
+	function setCookie(name, value, expires, path, domain, secure) {
+document.cookie = name + "=" + escape(value) +
+((expires == null) ? "" : "; expires=" + expires.toGMTString()) +
+((path == null) ? "" : "; path=" + path) +
+((domain == null) ? "" : "; domain=" + domain) +
+((secure == null) ? "" : "; secure");
+}
+ 
+// Read cookie
+function getCookie(name){
+	var cname = name + "=";
+	var dc = document.cookie;
+	if (dc.length > 0) {
+		begin = dc.indexOf(cname);
+		if (begin != -1) {
+		begin += cname.length;
+		end = dc.indexOf(";", begin);
+		if (end == -1) end = dc.length;
+		return unescape(dc.substring(begin, end));
+		}
+	}
+	return null;
+}
+
+function eraseCookie (name,path,domain) {
+if (getCookie(name)) {
+document.cookie = name + "=" +
+((path == null) ? "" : "; path=" + path) +
+((domain == null) ? "" : "; domain=" + domain) +
+"; expires=Thu, 01-Jan-70 00:00:01 GMT";
+}
+}
 
 function sortStringDesc(s1, s2){
           return (s1>s2 ? -1 : (s1 < s2 ? 1 : 0));
      }
 	 
-function exSearch(type_ex){
+function exSearch(){
 	var pivot = [];
 	var arrA = [];
 	var arrAB = [];
@@ -955,19 +725,13 @@ function exSearch(type_ex){
 	var countA = 0;
 	
 	str = document.getElementById("rawSAkey").innerHTML;
-	nameStr = $("#rawSAname").html();
-	var mode = $("#entities").val();	
+	var mode = $("#typeSearchSA").val();	
 	var range = $("#range").val();
 	var check = document.getElementById("istest");
-   // if(check.checked == true)
-	if(type_ex==1){
-		str = " "+$("#popup-content-uri").html();
-		$('div#popup-bg').fadeOut(500);
-		$('div#popup').fadeOut(500);
-		}
-	//str = " http://data.linkedmdb.org/resource/actor/29852 http://data.linkedmdb.org/resource/actor/29851";
-	//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
-	//neu khong add gi vao thi se yeu cau them dau vao
+    if(check.checked == true)
+	
+	str = " http://data.linkedmdb.org/resource/film/72";
+		//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
 	if(encodeURIComponent(str)=="%0A"){
 		alert("Please Select SA key");
 			return;
@@ -983,29 +747,14 @@ function exSearch(type_ex){
 	$("#loading").fadeIn("slow");
 	$("#keySA").fadeOut();
 	var res = str.split(" ");
-	var resName = nameStr.split(":");
-	var query ="";
+		
 	prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
-	//tim kiem voi cac thuoc tinh cua thuc the dau tien
-	if(mode=="1"){	
-	 query = "SELECT distinct ?o WHERE {{<"+res[1]+"> ?p ?o} UNION {?o ?p <"+res[1]+">}}";
-	 $("#PivotKey").html(res[1]);
-	}
-	
-	else if(mode=="2"){		
-	var tmp="";
-	$("#PivotKey").html('');
-		for(var i=1;i<res.length;i++){
-			if(i==1)
-				tmp=tmp+"{<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
-			else
-				tmp=tmp+" UNION {<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}";
-		  query = "SELECT distinct ?o WHERE {"+tmp+"}";
-		  $("#PivotKey").append(" "+res[i]);
-		}	  
-	}
+		
+	var query = "SELECT distinct ?o WHERE {{<"+res[1]+"> ?p ?o} UNION {?o ?p <"+res[1]+">}}";
 	var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
-	//tim kiem cac thuoc tinh cua thuc the dau tien
+	var expiration = new Date();
+	expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+	setCookie("PivotKey",res[1],expiration);
 	$.ajax({
     type:     "GET",
     url:      uri, // <-- Here
@@ -1019,7 +768,7 @@ function exSearch(type_ex){
 		$("#all_box").show();
 		
 		$("#keySA").fadeIn();
-		//xac dinh cac thuoc tinh la thuc the hay URI
+		//tim kiem tat ca thuoc tinh cua thuc the dau tien
 		for(i=0;i<arr.length;i++){
 			if(arr[i]['o']['type']=="uri")
 				if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
@@ -1028,7 +777,7 @@ function exSearch(type_ex){
 					pivot.push({key:tmp,value:tmp});
 				}
 		}
-		//Tinh trong so cua cac thuoc tinh cua thuc the dau tien do
+		//Tinh trong so cua cac thuco tinh cua thuc the dau tien do
 		for(i=1;i<res.length;i++){
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
@@ -1050,30 +799,25 @@ function exSearch(type_ex){
 		}
 		//Neu chi co 1 thuc the tim kiem thi dua ra cac thuoc tinh cua thuc the do
 		if(res.length==2){
-		            var count2=0;
-            var countb=0,counta=0;
 			for(var j=0;j<pivot.length;j++){
 			
 						query = "SELECT * WHERE {<"+pivot[j].key+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-				//Hien thi thong tin
+				//$("#functionAResult").append(uri+"</br");
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
 						dataType: "jsonp",
 						beforeSend: function (jqXHR) {
 								jqXHR.key = pivot[j].key;
-								jqXHR.mainName = resName[1];
 							},
 						success:function(data, textStatus, jqXHR){						
 						var key = jqXHR.key;
-						var mainName = jqXHR.mainName;
 						if(data == undefined) return;
 						var arr = data['results']['bindings'];
 							
 							
 						 for(var i=0;i<arr.length;i++){
-						 //xac dinh cac thuc the la film, tinh muc do diem so de goi y dua vao imdb
 						 if(arr[i]['url']['value'].search("imdb.com")!=-1){
 							var page = arr[i]["url"]["value"].replace("http://www.imdb.com/title/","");
 							page = page.replace("/","");
@@ -1088,9 +832,9 @@ function exSearch(type_ex){
 										success:function(data, textStatus, jqXHR){
 											var x = parseInt(data["imdbRating"]);
 											arrIMDB.push({vote:x,page:arr[0]['url']['value'],key:jqXHR.key});
+											 //alert(JSON.stringify(arrIMDB.sort(sortStringDesc)));
 										}
 							});}
-						//hien thi thong tin chi tiet	
 							if(arr[i]['url']['value'].search("freebase")!=-1){
 								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
 								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
@@ -1099,62 +843,50 @@ function exSearch(type_ex){
 									url:      uri, // <-- Here
 									dataType: 'json',
 									beforeSend: function (jqXHR) {
-										jqXHR.uri = uri;
-										jqXHR.key = key;
-										jqXHR.mainName = mainName;
+													jqXHR.uri = uri;
+													jqXHR.key = key;
 									},
 									success:function(data, textStatus, jqXHR){	
-										var name,img,type,des;
-										type="";
-										if(data.property['/type/object/name']!= undefined )
-											name = data.property['/type/object/name'].values[0].text;
-										else name="";
-										if(data.property['/type/object/type']!= undefined ){
-											for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-												var tmp = data.property['/type/object/type'].values[k].text;
-												if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-												(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-												(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-													if(type=="")
-														type = type +"\""+ tmp +"\"";
-													else
-														type = type +"-\""+ tmp +"\"";
-											}
-										}
-										else type="...";
-										if(data.property['/common/topic/description']!= undefined )
-											des = data.property['/common/topic/description'].values[0].text;
-										else des="...";
-										if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
-										
-										var why=jqXHR.key.replace("http://data.linkedmdb.org/resource/","");
-										var ind = parseInt(why.indexOf("\/"));
-										why = why.slice(0,ind)+" of "+jqXHR.mainName;
-										
-										if(name!=""){
-											str = '<li><div class="post-info">'
+									var name,img,type,des;
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
+														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'<h2>'+why+'</h2>'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
 											+'</div>'
 											+'</div>'
 												+'</li>';
-											arrNameB.push({key:jqXHR.key,value:name});	
+											arrNameB.push({key:jqXHR.key,value:name});
+										//	alert(name);
+										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									
-									//Neu co nhieu hon mot bo phim thi sap xep theo thu tu giam dan de hien thi	
-									/*count2++;
+									count2++;
 									if(count2==(pivot.length-1)){
+									
 										if(arrIMDB.length>=2){
-											  for(var i=0;i<arrIMDB.length;i++)												
-											  for(var j=i+1;j<arrIMDB.length;j++)
+											  for(var i=0;i<arrIMDB.length;i++)												for(var j=i+1;j<arrIMDB.length;j++)
 												 if(arrIMDB[i].vote<arrIMDB[j].vote){
 														 var tmp = arrIMDB[i].vote;
 														arrIMDB[i].vote = arrIMDB[j].vote;
@@ -1174,22 +906,11 @@ function exSearch(type_ex){
 												},
 												success:function(data, textStatus, jqXHR){
 												 var name,img,type,des;
-												type="";
 												 if(data.property['/type/object/name']!= undefined )
 																name = data.property['/type/object/name'].values[0].text;
 															else name="";
-															if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
+															if(data.property['/type/object/type']!= undefined )
+																type = data.property['/type/object/type'].values[0].text;
 															else type="...";
 														if(data.property['/common/topic/description']!= undefined )
 																des = data.property['/common/topic/description'].values[0].text;
@@ -1217,21 +938,10 @@ function exSearch(type_ex){
 											}											
 											
 											 }
+										 //alert(JSON.stringify(arrIMDB));
 									
-									}*/
-									
-									
-									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
-									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
-									(type.search("director")!=-1)||(type.search("producer")!=-1))
-										if(img!="")
-											$("#topsearch").prepend(str);
-										else
-											$("#topsearch").append(str);
-									if(img!="")
-										$("#allsearch").prepend(str);
-									else
-										$("#allsearch").append(str);								
+									}
+									$("#allsearch").append(str);									
 									} 
 								});	
 							}
@@ -1247,6 +957,7 @@ function exSearch(type_ex){
 			
 		query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {{?s ?o <"+res[i]+">} UNION {<"+res[i]+"> ?o ?s}}.{{?s ?o <"+pivot[j].key+">} UNION {<"+pivot[j].key+"> ?o ?s}}}";
 		uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+		//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
 		  $.ajax({
 				type:     "GET",
 				url:      uri, // <-- Here
@@ -1258,8 +969,6 @@ function exSearch(type_ex){
 				success:function(data, textStatus, jqXHR){
 					var uri1 = jqXHR.uri1; 
 					var uri2 = jqXHR.uri2; 
-					//Kiem tra neu co quan he ngu nghia thi dua vao top
-					if(data['results']['bindings']!=undefined)
 					if(data['results']['bindings'].length>0){
 					var count = data['results']['bindings'][0]['count']['value'];
 					arrAB.push({key:uri1,key1:uri2,value:count});
@@ -1292,29 +1001,24 @@ function exSearch(type_ex){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
-												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
 												else des="...";
 												  if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
 												if(name!=""){
 										str = '<li><div class="post-info">'
 											+img
@@ -1331,22 +1035,14 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-									var rawtmp = $("#rawtop").html();
-										if(rawtmp.search(jqXHR.key)==-1){
-													
-													if(img!="")
-										$("#topsearch").prepend(str);
-									else
-										$("#topsearch").append(str);	
-													$("#rawtop").append(" "+jqXHR.key);
-													}							
-												} 
-																	
-									 
+									$("#topsearch").append(str);									
+									} 
 								});	
 							}
 						}
 						});						
+					//$("#functionAResult").append(uri1+","+uri2+":");					
+					//$("#functionAResult").append(data['results']['bindings'][0]['count']['value']+"</br>");
 						query = "SELECT  (COUNT(distinct ?s) AS ?count) WHERE{ {?s ?o <"+uri2+">} UNION {<"+uri2+"> ?o ?s}}";
 						uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
 						//$("#functionAResult").append(i+","+j+":"+pivot.length+"</br>");
@@ -1365,17 +1061,21 @@ function exSearch(type_ex){
 									var count = data['results']['bindings'][0]['count']['value'];
 									arrA.push({key:jqXHR.key,value:count});
 									countA +=1;
-									
-									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"</br>");
-									if(countA==countAB){
-											//$("#functionAResult").append(JSON.stringify(arrAB[0]));
+									//$("#functionAResult").append("aa"+countA+"aa"+countAB+"bb");
+									 if(countA==countAB){
+											$("#functionAResult").append(JSON.stringify(arrAB[0]));
 											for(var i=0;i<arrAB.length;i++){
 												
 												relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
 											}
-											
+											eraseCookie("RelateArr");
 											var json = JSON.stringify(relatedAB);
-											$("#RelateArr").html(json);
+											var expiration = new Date();
+											expiration.setTime(expiration.getTime() + 100000000); //Expire after 10 seconds
+											setCookie("RelateArr",json,expiration);
+											/* for(var i=0;i<relatedAB.length;i++){
+												$("#functionAResult").append(relatedAB[i].key+relatedAB[i].key1+":"+relatedAB[i].value+"</br>");	
+											} */
 											
 										}
 									
@@ -1384,10 +1084,11 @@ function exSearch(type_ex){
 									 } 
 								});	
 					}
-				//Kiem tra neu khong co quan he ngu nghia thi dua vao all	
+					
 					else{
 						query = "SELECT * WHERE {<"+uri2+"> foaf:page ?url}";
 				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+				//$("#functionAResult").append(uri+"</br");
 					$.ajax({
 						type:     "GET",
 						url:      uri, // <-- Here
@@ -1414,29 +1115,24 @@ function exSearch(type_ex){
 									success:function(data, textStatus, jqXHR){	
 									$("#keySA").fadeIn();
 									var name,img,type,des;
-												type="";
 									if(data.property['/type/object/name']!= undefined )
 													name = data.property['/type/object/name'].values[0].text;
 												else name="";
 												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
+														if(data.property['/type/object/type'].length>=2){
+															type = "\""+data.property['/type/object/type'].values[0].text+"\""
+															+"-"+"\""+data.property['/type/object/type'].values[1].text+"\"";
 														}
+														else
+															type = "\""+data.property['/type/object/type'].values[0].text+"\"";
 													}
 												else type="...";
 												if(data.property['/common/topic/description']!= undefined )
 													des = data.property['/common/topic/description'].values[0].text;
 												else des="...";
 												  if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+													img ='<img src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/>';
+												else img=""; 
 												if(name!=""){
 										str = '<li><div class="post-info">'
 											+img
@@ -1453,18 +1149,8 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
-										var rawtmp = $("#rawrecommend").html();
-										if(rawtmp.search(jqXHR.key)==-1){
-													
-													if(img!="")
-														$("#allsearch").prepend(str);
-													else
-														$("#allsearch").append(str);	
-													$("#rawrecommend").append(" "+jqXHR.key);
-													}							
-												} 
-																	
-									
+									$("#allsearch").append(str);									
+									} 
 								});	
 							}
 						}
@@ -1474,31 +1160,29 @@ function exSearch(type_ex){
 					} 
 				});	 
 			}
-		} 
-		
-	}
-		
+		} }
 });		
 }
 
 
-function showWhy(){
-	$("#popup-content").fadeOut();
-	$("#popup-why").fadeIn();
-				
-			
-}
-function hideWhy(){
-	$("#popup-content").fadeIn();
-	$("#popup-why").fadeOut();
+
+function clearExSearch(){
+	document.getElementById("rawSAkey").innerHTML="";
+	document.getElementById("keySA").innerHTML="";
 }
 </script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="js/jquery.bxslider.min.js"></script>
-    <link href="css/jquery.bxslider.css" rel="stylesheet" />
-    <script type="text/javascript">
-        
-    </script>
+<script type='text/javascript'>
+$(document).ready(function(){
+    $(window).scroll(function() {
+    if ($(window).scrollTop() > 50) {
+        $(".accordian1").css("position", "fixed");
+    }
+    else {
+        $(".accordian1").css("position", "static");
+    }
+});
+});
+</script>
 	
 <script type="text/javascript" src="js/graph/raphael-min.js"></script>
     <script type="text/javascript" src="js/graph/dracula_graffle.js"></script>
@@ -1535,46 +1219,30 @@ function hideWhy(){
 						</div> 	
 					</div> 
 				</div>       	  
-				<div class="top-searchbar" id="top_search" style="display:;">
-						<input placeholder="Enter text here..." id="text_search" type="text" onkeydown="if (event.keyCode == 13) search(10)"/><input onclick= "search(10);" type="button" value="" />
+				<div class="top-searchbar" id="top_search" style="display:none;">
+						<input placeholder="Enter text here..." id="text_search" type="text" onkeydown="if (event.keyCode == 13) search(10)"/><input type="button" value="" />
 						<div>
-						<div id="bxslider-list" style="display:none">
-								<ul id="bxslider">
-								<!-- <li > <img src="http://placehold.it/350x110/9b59b6/ffffff/&text=abc"></li> -->
-								</ul>
-						</div>
+						<a  class="myButton" onclick= "exSearch();">EX</a><a  class="myButton" onclick= "clearExSearch();">Clear</a>
+						<input type="range" min="0" max="100" value="0" step="50" style="width:40px;" onchange="showValueSlider(this.value)" />
+						<script>
+							function showValueSlider(newValue)
+								{
+									document.getElementById("range").value=newValue;
+								}
+						</script>
+						<input type="number" id="range" value="0" style="width:40px;"/>
+						<select id="typeSearchSA">
+						  <option value="simple">Simple</option>
+						  <option value="specification">Specification</option>
+						</select>
+						<input type="checkbox" id="istest" value="ok">Test<br>
+						<div class="accordian">
+	<ul id="keySA">
+	</ul>
+</div>
 						</div>
 				</div>
-					<div id = "UI_EX">
-							
-							<div class="exButton" onclick= "exSearch(0);" ><span>EXSearch<span></div><div  class="clButton" onclick= "clearExSearch();">Clear</div>
-							<label>
-							<!-- <input type="range" min="0" max="100" value="0" step="50" style="width:40px;" onchange="showValueSlider(this.value)" /> -->
-							<script>
-								function showValueSlider(newValue)
-									{
-										document.getElementById("range").value=newValue;
-									}
-							</script>
-							<!-- <input type="number" id="range" value="0" style="width:40px;"/> -->
-							<div id="advanceOption">
-							<label for="Depth">Depth</label>
-							<select id="depth">
-							  <option value="1">1</option>
-							  <option value="2">2</option>
-							</select>
-							<label for="male">Entities</label>
-							<select id="entities">
-							  <option value="1">1</option>
-							  <option value="2">2</option>
-							</select>
-							<!-- <input type="checkbox" id="istest" value="ok">Test<br> -->
-						</div>
-						</div>
-					<ul id="keySA">
-					</ul>
-				</div>
-					
+				
 			</div>
 		</div>
 		<!---//End-header---->
@@ -1585,32 +1253,16 @@ function hideWhy(){
 			 <div id="main" >
 			 
 
-<div style="display:none" id="allType">
-[{"key":"film_distribution_medium","value":"film distribution medium"},{"key":"film_art_director","value":"film art director"},{"key":"special_film_performance_type","value":"special film performance type"},{"key":"interlink","value":"interlink"},{"key":"film_screening_venue","value":"film screening venue"},{"key":"film_festival","value":"film festival"},{"key":"film_awards_ceremony","value":"film awards ceremony"},{"key":"film_production_designer","value":"film production designer"},{"key":"personal_film_appearance","value":"personal film appearance"},{"key":"film_collection","value":"film collection"},{"key":"film_character","value":"film character"},{"key":"content_rating","value":"content rating"},{"key":"linkage_run","value":"linkage run"},{"key":"country","value":"country"},{"key":"production_company","value":"production company"},{"key":"music_contributor","value":"music contributor"},{"key":"film_cut","value":"film cut"},{"key":"film_format","value":"film format"},{"key":"writer","value":"writer"},{"key":"performance","value":"performance"},{"key":"film_film_company_relationship","value":"film film company relationship"},{"key":"film_job","value":"film job"},{"key":"content_rating_system","value":"content rating system"},{"key":"dubbing_performance","value":"dubbing performance"},{"key":"film_location","value":"film location"},{"key":"film_casting_director","value":"film casting director"},{"key":"film_company","value":"film company"},{"key":"personal_film_appearance_type","value":"personal film appearance type"},{"key":"film_featured_song","value":"film featured song"},{"key":"film_distributor","value":"film distributor"},{"key":"film_series","value":"film series"},{"key":"film_set_designer","value":"film set designer"},{"key":"film_festival_event","value":"film festival event"},{"key":"film_costume_designer","value":"film costume designer"},{"key":"film","value":"film"},{"key":"film_genre","value":"film genre"},{"key":"film_festival_focus","value":"film festival focus"},{"key":"film_crewmember","value":"film crewmember"},{"key":"film_subject","value":"film subject"},{"key":"film_critic","value":"film critic"},{"key":"director","value":"director"},{"key":"film_regional_release_date","value":"film regional release date"},{"key":"film_festival_sponsor","value":"film festival sponsor"},{"key":"film_theorist","value":"film theorist"},{"key":"cinematographer","value":"cinematographer"},{"key":"film_film_distributor_relationship","value":"film film distributor relationship"},{"key":"producer","value":"producer"},{"key":"film_crew_gig","value":"film crew gig"},{"key":"actor","value":"actor"},{"key":"editor","value":"editor"},{"key":"film_story_contributor","value":"film story contributor"}]</div>		
-<div style="display:none" id="rawSAkey"></div>
-<div style="display:none" id="rawSAname"></div>
-<div style="display:none" id="RelateArr"></div>
-<div style="display:none" id="PivotKey"></div>
+		
+<div style="display:none" id="rawSAkey">
+</div>
 <div id="functionAResult" style="display:"></div>
 <div id="functionABResult" style="display:"></div>
 
 <div id="popup-bg"></div>
 <div id="popup">
-	<div id="popup-header"><span id="popup-name"></span><span id="popup-close" title="Close">x</span></div>
-	<div id="top-content">
-		<div id="top-content-name"></div>
-		<div id="popup-content-uri" style="display:none"></div>
-		<div id='cssmenu'>
-		<ul>
-		   <li><a href='#' onclick="hideWhy();"><span>Info</span></a></li>
-		   <li><a href='#' onclick="showWhy();"><span>Why it is recomended?</span></a></li>
-		   <li><a href='#' onclick="exSearch(1);"><span>Run an exploration</span></a></li>
-		   <li><a href='#' style="background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
-		</ul>
-		</div>
-	</div>
-    <div id="popup-content" style="overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
-	
+	<div id="popup-header"><span id="popup-close" title="Close">x</span></div>
+    <div id="popup-content" style="overflow-y: scroll; width:700px; height:400px;">
 	<div class="loading1">
 							<div></div>
 							<div></div>
@@ -1618,10 +1270,6 @@ function hideWhy(){
 							<div></div>
 							<div></div>
 						</div></div>
-	<div id="popup-why" style="display:">
-	<div id="popup-why-name" style="color:#d35400; font-size:20px; margin:2%;"></div>
-	<div id='canvas'></div>
-	</div>	
 </div>
 					<div id="loading" class="element" style="display: none;">	
 <div style="font-family: 'Open Sans', sans-serif; font-weight: bold;font-size: 50px; color:#741bb1; margin-left:-5%">Searching</div>
@@ -1635,40 +1283,24 @@ function hideWhy(){
 						</div>
 					</div>
 			      <ul id="abc">
-				  <div id="cache_exsearch" style="display:none;">
-					</br>
-					</br>
-				  </div>
-				  <div class="box_search" id ="top_box" style ="display:none; overflow:hidden;">
-							<h4 style ="background:#E74C3C;">TOP</h4>
-							<div id ="topsearch" style="overflow-y: scroll; overflow-x:hidden; width:700px; height:400px;">
-						
-							</div>
-							<div id="rawtop" style ="display:none;"></div>
-						</div>
-
-					<div class="box_search" id ="all_box" style ="display:none; overflow:hidden;">
-							<h4 style ="background:#1abc9c;">RECOMMEND</h4>
-							<div id ="allsearch" style="overflow-y: scroll; overflow-x:hidden;width:700px; height:400px;">
+				  <div class="box_search" id ="top_box" style ="display:none;">
+							<h4 style ="background:red;">TOP</h4>
+							<div id ="topsearch" style="overflow-y: scroll; width:700px; height:400px;">
 							
 							</div>
-							<div id="rawrecommend" style ="display:none;"></div>
+						</div>
+						<div class="box_search" id ="all_box" style ="display:none;">
+							<h4>RECOMMEND</h4>
+							<div id ="allsearch" style="overflow-y: scroll; width:700px; height:400px;">
+							
+							</div>
 						</div>
 			        <!-- These are our grid blocks -->
 			        	<div class="alert-box" class="tooltips">
-							<div style="padding: 3%; text-align:left;">
-							<h1>Expolatory Search</h1>
-							<p> The exploratory search is a new way to search the web, not to find what you are searching, but to find what you are not searching, and might be intersting for you ! It allows performing queries in an innovative way and helps you to navigate rich results. As a hub, it proposes redirections to others platforms to make you benefit from your discoveries</p>
-							</div>
-							<div style="background:#34495e; padding: 3%; text-align:right;">
-							<h1  style="color:white;">Get recommendations on your interests</h1>
-							<p style="color:white;"> Want a film recommendation related to actors you like? Want a film recommendation focus to genre you like? Interested by more complex and composite recommendations based on your deepest interests : a actor, a director and a film? Or maybe something simpler ? If you have a thirst for discovery and knowledge, System has answers for you</p>
-							</div>
-							<div style="padding: 3%; text-align:left;">
-							<h1>Understand a recommendation</h1>
-							<p> System gives you recommendations, but also tools to understand why you have these recommendations, because we know that the more important in a recommendation is to know why you get it !</p>						
-							</div>
-						<!-- <a class="a-alert" id="a-start" href="#" onclick="start()" >Get Started</a> -->
+							<img src="images/right-icon.png" title="check" />
+							
+							<p>Expolatory Search Film</p>
+							<a class="a-alert" id="a-start" href="#" onclick="start()" >Get Started</a>
 						</div>				
 						
 			        <!-- End of grid blocks -->

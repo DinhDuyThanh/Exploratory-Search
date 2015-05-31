@@ -1,9 +1,12 @@
 
 var redraw, g, renderer;
-function drawgraph1(json,key) {
-    var parsed = JSON.parse(json);
+function drawgraph1(key) {
 	//alert("aa"+parsed["anh"]["x"]);
-	var pivot = getCookie("PivotKey");
+	var res = $("#PivotKey").html();
+	var pivot = res.split(" ");
+	var json = $("#RelateArr").html();	
+    var parsed = JSON.parse(json);
+	//alert(JSON.stringify(pivot));
 		//alert(pivot);
 /* 	$.ajax({
 									type:     "GET",
@@ -66,13 +69,18 @@ function drawgraph1(json,key) {
     var height = 300;
     
     g = new Graph();
+	/* if(pivot.length==1)
 	for(var i=0;i<parsed.length;i++)
 	{
 		if(parsed[i].key1==key)	{
-		g.addEdge(pivot, parsed[i].key1, { stroke : "#bfa" , fill : "#56f", label : "property" });
+		g.addEdge(pivot[0], parsed[i].key1, { stroke : "#bfa" , fill : "#56f", label : "property" });
 		g.addEdge(parsed[i].key, parsed[i].key1, { stroke : "#bfa" , fill : "#56f", label : parsed[i].value });
 		}
 	}
+	else{
+	} */
+	g.addEdge("Titanic", "", { stroke : "#bfa" , fill : "#56f", label : parsed[i].value });	
+	
 	 /* for(key in parsed){
 		for(value in parsed[key])
 			//g.addEdge("cherry", "apple");
@@ -136,38 +144,14 @@ function drawgraph() {
     var height = 300;
     
     g = new Graph();
-
-    /* add a simple node */
-    g.addNode("strawberry");
-    g.addNode("cherry");
-    g.addNode("1", { label : "Tomato" });
-    g.addNode("id35", {
-        label : "meat\nand\ngreed" //,
-    });
-    st = { directed: true, label : "Label",
-            "label-style" : {
-                "font-size": 20
-            }
-        };
-    g.addEdge("kiwi", "penguin", st);
-    g.addEdge("strawberry", "cherry");
-    g.addEdge("cherry", "apple");
-    g.addEdge("cherry", "apple")
-    g.addEdge("1", "id35");
-    g.addEdge("penguin", "id35");
-    g.addEdge("penguin", "apple");
-    g.addEdge("kiwi", "id35");
-
-    /* a directed connection, using an arrow */
-    g.addEdge("1", "cherry", { directed : true } );
-    
+   
     /* customize the colors of that edge */
-    g.addEdge("id35", "apple", { stroke : "#bfa" , fill : "#56f", label : "Meat-to-Apple" });
+    g.addEdge("Leonardo DiCaprio", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "is actor of" });
+    g.addEdge("Kate Winslet", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "0,456712543368255" });
+    g.addEdge("Kate Winslet", "Leonardo DiCaprio", { stroke : "#bfa" , fill : "#56f", label : "perform with" });
     
-    /* add an unknown node implicitly by adding an edge */
-    g.addEdge("strawberry", "apple");
 
-    g.removeNode("1");
+   // g.removeNode("1");
 
     /* layout the graph using the Spring layout implementation */
     var layouter = new Graph.Layout.Spring(g);

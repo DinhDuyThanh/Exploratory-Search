@@ -1,0 +1,5 @@
+danh gia phan 1
+p: phan top co do chinh xac cao, hau nhu khong co thuc the sai, tru truong hop ten rieng co hai tu khoa. Tuy nhien, recall lai bi thap hon.
+r: phan recommend goi y them nhieu cai khac lam tang recall, tuy nhiên lai lam giam do chinh xac.
+danh gia phan 2
+p: phan top do chinh xac khong cao do phuong thuc lan truyen, gia su có cai no nam o thuc thẻ thu 3,4 thi khong biet dc, lam giam recall, con co nhieu quan he khong dung do lan truyen tu do nen lam giam phan
