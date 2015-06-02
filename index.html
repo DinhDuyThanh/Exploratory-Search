@@ -683,15 +683,16 @@ function showPopup1(uri,key){
 											if(arr[i]['page']['value'].search("dbpedia")!=-1){
 												var qr = "select * where {<"+decodeURIComponent(arr[i]['page']['value'])+"> dbpedia-owl:wikiPageExternalLink ?s}";
 												qr = encodeURIComponent(qr).replace(/%20/g,'+').replace(/%20/g,'+');
-												qr = qr.replace("(","%27");
+												qr = qr.replace("'","%27");
 												qr = qr.replace("(","%28");
 												qr = qr.replace(")","%29");
 												var ui = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="+qr+"&format=application%2Fsparql-results%2Bjson&timeout=30000&debug=on";
+												$("#abc").prepend(ui);
 												$.ajax({
 													type:     "GET",
 													url:      ui,
 													success:function(data, textStatus, jqXHR){	
-														//alert(JSON.stringify(data));
+														alert(JSON.stringify(data));
 														for(var i=0;i<data['results']['bindings'].length;i++){
 															$("#cssmenuExtend").show();
 															$("#extendlink").append('<a href="'+data['results']['bindings'][i]['s']['value']+'" target="_blank">'+data['results']['bindings'][i]['s']['value']+'</a></br>');
@@ -891,7 +892,7 @@ function showPopupEX(uri,key,mainKey){
 											if(arr[i]['page']['value'].search("dbpedia")!=-1){
 												var qr = "select * where {<"+decodeURIComponent(arr[i]['page']['value'])+"> dbpedia-owl:wikiPageExternalLink ?s}";
 												qr = encodeURIComponent(qr).replace(/%20/g,'+').replace(/%20/g,'+');
-												qr = qr.replace("(","%27");
+												qr = qr.replace("'","%27");
 												qr = qr.replace("(","%28");
 												qr = qr.replace(")","%29");
 												var ui = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="+qr+"&format=application%2Fsparql-results%2Bjson&timeout=30000&debug=on";
