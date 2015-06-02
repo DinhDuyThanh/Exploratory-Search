@@ -687,7 +687,7 @@ function showPopup1(uri,key){
 												qr = qr.replace("(","%28");
 												qr = qr.replace(")","%29");
 												var ui = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="+qr+"&format=application%2Fsparql-results%2Bjson&timeout=30000&debug=on";
-												$("#abc").prepend(ui);
+												//$("#abc").prepend(ui);
 												$.ajax({
 													type:     "GET",
 													url:      ui,
