@@ -14,7 +14,7 @@ Author: Dinh Duy Thanh
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-		alert = function(){};
+		//alert = function(){};
 		window.onerror=function(msg, url, linenumber){
 			alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
 			return true
@@ -308,7 +308,8 @@ Author: Dinh Duy Thanh
 		}
 		//Phan tich va tim kiem thuc the
 			function search(type){
-			
+			$("#fast_box").fadeOut();
+			$("#wiki_box").fadeOut();
 			$("#loading").fadeIn("slow");
 			
 				$("#topsearch").html("");			
@@ -464,9 +465,7 @@ Author: Dinh Duy Thanh
 			function start(){
 				document.getElementById("top_search").style.display = 'block';
 				$("#a-start").fadeOut();
-			}
-			
-			
+			}	
 	
 			function searchType(key,type){
 				$("#loading").fadeIn("slow");
@@ -610,6 +609,7 @@ function clearExSearch(){
 }
 function showPopup1(uri,key){	
 			$("#top-content-name").html('');
+			$("#popup-content").fadeIn();
 			$("#cssmenu").fadeOut();
 		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
@@ -763,7 +763,7 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 function showPopupEX(uri,key,mainKey){
 		$("#top-content-name").html('');
 			$("#cssmenu").fadeOut();
-			alert(key+mainKey);
+			$("#popup-content").fadeIn();
 		$("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -821,6 +821,7 @@ function showPopupEX(uri,key,mainKey){
 					var why=jqXHR.key.replace("http://data.linkedmdb.org/resource/","");
 					var ind = parseInt(why.indexOf("\/"));
 					why = why.slice(0,ind);
+					why = why +" of";
 					var arrtmp = [];
 					arrtmp.push({key1:jqXHR.key,key:jqXHR.mainKey,value:why});
 					var json = JSON.stringify(arrtmp);
@@ -831,7 +832,6 @@ function showPopupEX(uri,key,mainKey){
 				$("#top-content-name").html(name);
 				$("#popup-why-name").html("Why "+name+" is recomended?");
 				$("#popup-content-uri").html(jqXHR.key);
-				alert("ab");
 				drawgraph(jqXHR.key);
 				}
 				});	 
@@ -859,6 +859,7 @@ function showPopupEX(uri,key,mainKey){
 function showPopupSimple(uri,key){
 		$("#top-content-name").html('');
 			$("#cssmenu").fadeOut();
+			$("#popup-content").fadeIn();
 		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -941,7 +942,6 @@ function sleep(milliseconds) {
   }
 }
 
-
 function MaxAB(a,b){
 		if(a>b)
 			return a;
@@ -954,10 +954,15 @@ function MaxAB(a,b){
 	}
 	function RelateMeasure(A,B,AB){
 	
-		w= 279676;
+		W= 279676;
 		//$b=SearchA($uriB);
 		//$a=SearchA($uriA);
-		return (Math.log(MaxAB(A,B))-Math.log(AB))/(Math.log(w)-Math.log(MinAB(A,B)));
+		return (Math.log(MaxAB(A,B))-Math.log(AB))/(Math.log(W)-Math.log(MinAB(A,B)));
+	}
+	function RelateMeasureWiki(T){
+	
+		W= 279676;
+		return Math.log(W/T);
 	}
 	function getKeyValueArray(key,arr){
 		for(var i=0;i<arr.length;i++)
@@ -971,6 +976,7 @@ function sortStringDesc(a1, a2){
      }
 	 
 function exSearch(type_ex){
+	var arrPropertyGraph = [];
 	var arrNameGraph = [];
 	var pivot = [];
 	var arrA = [];
@@ -988,11 +994,14 @@ function exSearch(type_ex){
 			$("#startDepth").html("");
 				$("#rawtop").html("");
 				$("#rawfast").html("");
+				$("#rawwiki").html("");
 				$("#rawrecommend").html("");
 				$("#topsearch").html('');
 				$("#fastsearch").html('');
 				$("#allsearch").html('');
 				$("#numEXKey").html("");
+				$("#propertyGraph").html("");
+				$("#nameGraph").html("");
 				}
 	str = document.getElementById("rawSAkey").innerHTML;
 	nameStr = $("#rawSAname").html();
@@ -1124,6 +1133,30 @@ function exSearch(type_ex){
 						success:function(data, textStatus, jqXHR){
 							arrNameGraph.push({key:jqXHR.key,value:data['results']['bindings'][0]['name']['value']});
 									$("#nameGraph").html(JSON.stringify(arrNameGraph));
+						}
+					});
+					//Ghi nhan tat ca cac thuoc tinh
+					query = "SELECT distinct ?o WHERE {{<"+res[i]+"> ?p ?o} UNION {?o ?p <"+res[i]+">}}";
+					var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = res[i];
+							},
+						success: function(data, textStatus, jqXHR){						
+							var arr = data['results']['bindings'];
+							//xac dinh cac thuoc tinh la thuc the hay URI
+							for(i=0;i<arr.length;i++){
+								if(arr[i]['o']['type']=="uri")
+									if((arr[i]['o']['value'].search("linkedmdb")!=-1)&&(arr[i]['o']['value'].search("interlink")==-1)
+									&&(arr[i]['o']['value'].search("film_film_distributor_relationship")==-1)){
+										tmp = arr[i]['o']['value'];
+										arrPropertyGraph.push({key:jqXHR.key,property:tmp});
+										$("#propertyGraph").html(JSON.stringify(arrPropertyGraph));
+									}
+							}
 						}
 					});
 		}
@@ -1304,6 +1337,8 @@ function exSearch(type_ex){
 									   $("#abc").fadeIn();
 										$("#top_box").fadeIn();
 										$("#all_box").fadeIn();
+										//Phan top hien cac thong tin lien quan den film
+										//Phan recommend hien tat cac cac thong tin
 									 if((type.search("\"Film\"")!=-1)||(type.search("actor")!=-1)||
 									(type.search("editor")!=-1)||(type.search("writer")!=-1)||
 									(type.search("director")!=-1)||(type.search("producer")!=-1))
@@ -1461,9 +1496,9 @@ function exSearch(type_ex){
 									countA +=1;
 									if(countA==countAB){
 										for(var i=0;i<arrAB.length;i++){
-											relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value)}); 									
-												
+											relatedAB.push({key:arrAB[i].key,key1:arrAB[i].key1,value:RelateMeasure(getKeyValueArray(arrAB[i].key,arrPivot),getKeyValueArray(arrAB[i].key1,arrA),arrAB[i].value),value1:RelateMeasureWiki(getKeyValueArray(arrAB[i].key1,arrA))});										
 										}
+										//Sap xep theo moi quan he ngu nghia cua cong thuc google
 										for(var i=0;i<relatedAB.length;i++)
 											for(var j=i+1;j<relatedAB.length;j++)
 												if(relatedAB[i].value<relatedAB[j].value){
@@ -1471,99 +1506,17 @@ function exSearch(type_ex){
 													relatedAB[i]=relatedAB[j];
 													relatedAB[j]=t;
 												}
-										alert(JSON.stringify(relatedAB));
-										if(depth==1)
-											for(var i=0;i<relatedAB.length;i++)
-											{
-												query = "SELECT * WHERE {<"+relatedAB[i].key1+"> foaf:page ?url}";
-				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
-					$.ajax({
-						type:     "GET",
-						url:      uri, // <-- Here
-						dataType: "jsonp",
-						async:false,
-						beforeSend: function (jqXHR) {
-								jqXHR.key = relatedAB[i].key1;
-							},
-						success:function(data, textStatus, jqXHR){
-						var key = jqXHR.key;
-						var arr = data['results']['bindings'];
-						 for(var i=0;i<arr.length;i++)
-							if(arr[i]['url']['value'].search("freebase")!=-1){
-								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
-								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
-								$.ajax({
-									type:     "GET",
-									url:      uri, // <-- Here
-									dataType: 'json',
-									beforeSend: function (jqXHR) {
-													jqXHR.uri = uri;
-													jqXHR.key = key;
-									},
-									success:function(data, textStatus, jqXHR){	
-									$("#keySA").fadeIn();
-									var name,img,type,des;
-												type="";
-									if(data.property['/type/object/name']!= undefined )
-													name = data.property['/type/object/name'].values[0].text;
-												else name="";
-												if(data.property['/type/object/type']!= undefined ){
-														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
-															var tmp = data.property['/type/object/type'].values[k].text;
-															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
-															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
-															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
-															if(type=="")
-																type = type +"\""+ tmp +"\"";
-															else
-																type = type +"-\""+ tmp +"\"";
-														}
-													}
-												else type="...";
-												if(data.property['/common/topic/description']!= undefined )
-													des = data.property['/common/topic/description'].values[0].text;
-												else des="...";
-												  if(data.property['/common/topic/image']!= undefined )
-													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
-												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
-												if(name!=""){
-										str = '<li><div class="post-info">'
-											+img
-											+'<div class="post-basic-info">'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
-											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
-											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
-											+'	<p>'+des+'</p>'
-											+'</div>'
-											+'</div>'
-												+'</li>';
-											arrNameB.push({key:jqXHR.key,value:name});
-											}
-										else str="";
-										arrNameGraph.push({key:key,value:name});
-									$("#nameGraph").html(JSON.stringify(arrNameGraph));
-										$("#abc").fadeIn();
-										$("#loading").fadeOut("slow");
-										$("#top_box").fadeIn();
-									var rawtmp = $("#rawtop").html();
-										if(rawtmp.search(jqXHR.key)==-1){
-													
-													if(img!="")
-										$("#topsearch").prepend(str);
-									else
-										$("#topsearch").append(str);	
-													$("#rawtop").append(" "+jqXHR.key);
-													}							
-												} 
-																	
-									 
-								});	
-							}
-						}
-						});						
-				
-											}
-										else if(depth==2){
+										var wikiRelatedAB = relatedAB;
+										for(var i=0;i<wikiRelatedAB.length;i++)
+											for(var j=i+1;j<wikiRelatedAB.length;j++)
+												if(wikiRelatedAB[i].value1<wikiRelatedAB[j].value1){
+													var t = wikiRelatedAB[i];
+													wikiRelatedAB[i]=wikiRelatedAB[j];
+													wikiRelatedAB[j]=t;
+												}
+										
+										alert(JSON.stringify(wikiRelatedAB));
+										
 									for(var i=0;i<relatedAB.length;i++)
 											{
 												query = "SELECT * WHERE {<"+relatedAB[i].key1+"> foaf:page ?url}";
@@ -1652,6 +1605,90 @@ function exSearch(type_ex){
 							}
 						}
 						});	}
+								for(var i=0;i<wikiRelatedAB.length;i++)
+											{
+												query = "SELECT * WHERE {<"+wikiRelatedAB[i].key1+"> foaf:page ?url}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						async:false,
+						beforeSend: function (jqXHR) {
+								jqXHR.key = wikiRelatedAB[i].key1;
+							},
+						success:function(data, textStatus, jqXHR){
+						var key = jqXHR.key;
+						var arr = data['results']['bindings'];
+						 for(var i=0;i<arr.length;i++)
+							if(arr[i]['url']['value'].search("freebase")!=-1){
+								var page = arr[i]["url"]["value"].replace("http://www.freebase.com/view","");
+								var uri = "https://www.googleapis.com/freebase/v1/topic"+page+"?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ";
+								$.ajax({
+									type:     "GET",
+									url:      uri, // <-- Here
+									dataType: 'json',
+									beforeSend: function (jqXHR) {
+													jqXHR.uri = uri;
+													jqXHR.key = key;
+									},
+									success:function(data, textStatus, jqXHR){	
+									$("#keySA").fadeIn();
+									var name,img,type,des;
+												type="";
+									if(data.property['/type/object/name']!= undefined )
+													name = data.property['/type/object/name'].values[0].text;
+												else name="";
+												if(data.property['/type/object/type']!= undefined ){
+														for(var k=0;k<data.property['/type/object/type'].values.length;k++){
+															var tmp = data.property['/type/object/type'].values[k].text;
+															if((tmp.search("Film")!=-1)||(tmp.search("actor")!=-1)||
+															(tmp.search("editor")!=-1)||(tmp.search("writer")!=-1)||
+															(tmp.search("director")!=-1)||(tmp.search("producer")!=-1)||(tmp.search("character")!=-1))
+															if(type=="")
+																type = type +"\""+ tmp +"\"";
+															else
+																type = type +"-\""+ tmp +"\"";
+														}
+													}
+												else type="...";
+												if(data.property['/common/topic/description']!= undefined )
+													des = data.property['/common/topic/description'].values[0].text;
+												else des="...";
+												  if(data.property['/common/topic/image']!= undefined )
+													img ='<div class="image_info"><img width=70 height=90 src="https://usercontent.googleapis.com/freebase/v1/image'+data.property['/common/topic/image']['values'][0]['id']+'?key=AIzaSyDZXndLh8k1vpqvtrUPHHVerkEo0Qz98tQ"/></div>';
+												else img='<div class="image_info"><img width=70 height=90 src="images/noimage.png"/></div>'; 
+												if(name!=""){
+										str = '<li><div class="post-info">'
+											+img
+											+'<div class="post-basic-info">'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
+											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
+											+'	<p>'+des+'</p>'
+											+'</div>'
+											+'</div>'
+												+'</li>';
+											arrNameB.push({key:jqXHR.key,value:name});
+											}
+										else str="";
+										arrNameGraph.push({key:key,value:name});
+									$("#loading").fadeOut("slow");
+										$("#abc").fadeIn();
+										$("#wiki_box").fadeIn();
+									var rawtmp = $("#rawwiki").html();
+										if(rawtmp.search(jqXHR.key)==-1){									
+										$("#wikisearch").append(str);	
+													$("#rawwiki").append(" "+jqXHR.key);
+													}							
+												} 
+																	
+									 
+								});	
+							}
+						}
+						});	}
+									 if(depth==2){
 										
 										if($("#startDepth").html()!="ok"){
 										//alert("acb"+relatedAB.length);
@@ -1783,7 +1820,6 @@ function exSearch(type_ex){
 		
 });		
 }
-
 
 function showWhy(){
 //showPopupWating("Sorry! This feature is coming soon");
@@ -1922,7 +1958,6 @@ function hideWhy(){
 
 			<div class="wrap">
 			 <div id="main" >
-			 
 
 <div style="display:none" id="allType">
 [{"key":"film_distribution_medium","value":"film distribution medium"},{"key":"film_art_director","value":"film art director"},{"key":"special_film_performance_type","value":"special film performance type"},{"key":"interlink","value":"interlink"},{"key":"film_screening_venue","value":"film screening venue"},{"key":"film_festival","value":"film festival"},{"key":"film_awards_ceremony","value":"film awards ceremony"},{"key":"film_production_designer","value":"film production designer"},{"key":"personal_film_appearance","value":"personal film appearance"},{"key":"film_collection","value":"film collection"},{"key":"film_character","value":"film character"},{"key":"content_rating","value":"content rating"},{"key":"linkage_run","value":"linkage run"},{"key":"country","value":"country"},{"key":"production_company","value":"production company"},{"key":"music_contributor","value":"music contributor"},{"key":"film_cut","value":"film cut"},{"key":"film_format","value":"film format"},{"key":"writer","value":"writer"},{"key":"performance","value":"performance"},{"key":"film_film_company_relationship","value":"film film company relationship"},{"key":"film_job","value":"film job"},{"key":"content_rating_system","value":"content rating system"},{"key":"dubbing_performance","value":"dubbing performance"},{"key":"film_location","value":"film location"},{"key":"film_casting_director","value":"film casting director"},{"key":"film_company","value":"film company"},{"key":"personal_film_appearance_type","value":"personal film appearance type"},{"key":"film_featured_song","value":"film featured song"},{"key":"film_distributor","value":"film distributor"},{"key":"film_series","value":"film series"},{"key":"film_set_designer","value":"film set designer"},{"key":"film_festival_event","value":"film festival event"},{"key":"film_costume_designer","value":"film costume designer"},{"key":"film","value":"film"},{"key":"film_genre","value":"film genre"},{"key":"film_festival_focus","value":"film festival focus"},{"key":"film_crewmember","value":"film crewmember"},{"key":"film_subject","value":"film subject"},{"key":"film_critic","value":"film critic"},{"key":"director","value":"director"},{"key":"film_regional_release_date","value":"film regional release date"},{"key":"film_festival_sponsor","value":"film festival sponsor"},{"key":"film_theorist","value":"film theorist"},{"key":"cinematographer","value":"cinematographer"},{"key":"film_film_distributor_relationship","value":"film film distributor relationship"},{"key":"producer","value":"producer"},{"key":"film_crew_gig","value":"film crew gig"},{"key":"actor","value":"actor"},{"key":"editor","value":"editor"},{"key":"film_story_contributor","value":"film story contributor"}]</div>		
@@ -1937,6 +1972,7 @@ function hideWhy(){
 <div id="startDepth" style="display:none"></div>
 <div id="numEXKey" style="display:none"></div>
 <div id="nameGraph" style="display:none"></div>
+<div id="propertyGraph" style="display:none"></div>
 <script type='text/javascript'>window._sbzq||function(e){e._sbzq=[];var t=e._sbzq;t.push(["_setAccount",4305]);var n=e.location.protocol=="https:"?"https:":"http:";var r=document.createElement("script");r.type="text/javascript";r.async=true;r.src=n+"//static.subiz.com/public/js/loader.js";var i=document.getElementsByTagName("script")[0];i.parentNode.insertBefore(r,i)}(window);</script>
 
 <div id="popup-bg"></div>
@@ -2003,7 +2039,14 @@ function hideWhy(){
 							</div>
 							<div id="rawtop" style ="display:none;"></div>
 						</div>
-
+					<div class="box_search" id ="wiki_box" style ="display:none; overflow:hidden;">
+							<h4 style ="background:#E74C3C;">WIKI SORT</h4>
+							<div id ="wikisearch" style="overflow-y: scroll; overflow-x:hidden; width:700px; height:200px;">
+						
+							</div>
+							<div id="rawwiki" style ="display:none;"></div>
+						</div>
+						
 					<div class="box_search" id ="all_box" style ="display:none; overflow:hidden;">
 							<h4 style ="background:#1abc9c;">RECOMMEND</h4>
 							<div id ="allsearch" style="overflow-y: scroll; overflow-x:hidden;width:700px; height:400px;">
