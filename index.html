@@ -203,7 +203,7 @@ Author: Dinh Duy Thanh
 													+'</div>'
 												+'</li>';
 												else str="";
-													$("#top_box").show();
+													$("#top_box").fadeIn();
 													var rawtmp = $("#rawtop").html();
 													if(rawtmp.search(jqXHR.key)==-1){													
 													$("#topsearch").prepend(str);
@@ -290,7 +290,7 @@ Author: Dinh Duy Thanh
 												+'</li>';
 												else str="";
 												
-													$("#top_box").show();
+													$("#top_box").fadeIn();
 													var rawtmp = $("#rawtop").html();
 													if(rawtmp.search(jqXHR.key)==-1){
 													if(img!="")
@@ -310,6 +310,8 @@ Author: Dinh Duy Thanh
 			function search(type){
 			$("#fast_box").fadeOut();
 			$("#wiki_box").fadeOut();
+			$("#top_box").fadeOut();
+			$("#all_box").fadeOut();
 			$("#loading").fadeIn("slow");
 			
 				$("#topsearch").html("");			
@@ -334,7 +336,7 @@ Author: Dinh Duy Thanh
 				//module mo rong tu tim kiem voi cac tu khoa de xac dinh kieu
 				var json = $("#allType").html();
 				var arrTypeInput = JSON.parse(json);
-				//alert(JSON.stringify(arrType));
+				//bo qua cac stop word vi tim kieu khong can thiet
 				for(var j=0;j<arrTypeInput.length;j++)
 					for(var i=0;i<arrKey.length;i++){
 						if(checkStopWord(arrKey[i].value)) continue;
@@ -442,7 +444,7 @@ Author: Dinh Duy Thanh
 													+'</div>'
 												+'</li>';
 												else str="";
-												$("#all_box").show();
+												$("#all_box").fadeIn();
 												var rawtmp = $("#rawrecommend").html();
 													if(rawtmp.search(jqXHR.key)==-1){
 													
@@ -2072,7 +2074,7 @@ function hideWhy(){
 		   <li><a href='#' onclick="hideWhy();" ><span>Info</span></a></li>
 		   <li><a href='#' id = "cssmenuWhy" onclick="showWhy();"><span>Why it is recomended?</span></a></li>
 		   <li><a href='#' onclick="exSearch(1);"><span>Run an exploration</span></a></li>
-		   <li><a href='#' id = "cssmenuExtend" onclick="showExtendlink();"><span>Extend link</span></a></li>
+		   <li><a href='#' id = "cssmenuExtend" onclick="showExtendlink();"><span>Extend link DBpedia</span></a></li>
 		   <li><a href='#' id = "cssmenuDelete" style="display:none;background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
 		</ul>
 		</div>
