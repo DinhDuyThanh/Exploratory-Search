@@ -14,7 +14,7 @@ Author: Dinh Duy Thanh
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 		</script>
 		<script type="text/javascript">
-		//alert = function(){};
+		alert = function(){};
 		window.onerror=function(msg, url, linenumber){
 			alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber)
 			return true
@@ -465,7 +465,9 @@ Author: Dinh Duy Thanh
 			function start(){
 				document.getElementById("top_search").style.display = 'block';
 				$("#a-start").fadeOut();
-			}	
+			}
+			
+			
 	
 			function searchType(key,type){
 				$("#loading").fadeIn("slow");
@@ -611,6 +613,9 @@ function showPopup1(uri,key){
 			$("#top-content-name").html('');
 			$("#popup-content").fadeIn();
 			$("#cssmenu").fadeOut();
+			$("#extendlink").html("");
+			
+			$("#cssmenuExtend").hide();
 		  $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -660,10 +665,42 @@ function showPopup1(uri,key){
 				$("#popup-content").html(str);
 				$("#top-content-name").html(name);
 				$("#popup-content-uri").html(jqXHR.key);
-				drawgraph();
 				}
 				});	
-		var bg=$('div#popup-bg');
+		
+		prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
+		var query = "SELECT * WHERE{<"+key+"> owl:sameAs ?page }";		
+			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+							$.ajax({
+									type:     "GET",
+									url:      uri,
+									dataType: "jsonp",
+									success:function(data){	
+										var arr = data['results']['bindings'];
+										for(var i=0;i<arr.length;i++){
+											if(arr[i]['page']['value'].search("dbpedia")!=-1){
+												var qr = "select * where {<"+decodeURIComponent(arr[i]['page']['value'])+"> dbpedia-owl:wikiPageExternalLink ?s}";
+												qr = encodeURIComponent(qr).replace(/%20/g,'+').replace(/%20/g,'+');
+												qr = qr.replace("(","%27");
+												qr = qr.replace("(","%28");
+												qr = qr.replace(")","%29");
+												var ui = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="+qr+"&format=application%2Fsparql-results%2Bjson&timeout=30000&debug=on";
+												$.ajax({
+													type:     "GET",
+													url:      ui,
+													success:function(data, textStatus, jqXHR){	
+														//alert(JSON.stringify(data));
+														for(var i=0;i<data['results']['bindings'].length;i++){
+															$("#cssmenuExtend").show();
+															$("#extendlink").append('<a href="'+data['results']['bindings'][i]['s']['value']+'" target="_blank">'+data['results']['bindings'][i]['s']['value']+'</a></br>');
+														}
+													}
+												}); 
+											}
+										}
+									}
+								});
+	var bg=$('div#popup-bg');
 		var obj=$('div#popup');
 		var btnClose=obj.find('#popup-close');
 		bg.animate({opacity:0.2},0).fadeIn(500); 
@@ -764,6 +801,9 @@ function showPopupEX(uri,key,mainKey){
 		$("#top-content-name").html('');
 			$("#cssmenu").fadeOut();
 			$("#popup-content").fadeIn();
+			$("#extendlink").html("");
+			
+			$("#cssmenuExtend").hide();
 		$("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -835,7 +875,38 @@ function showPopupEX(uri,key,mainKey){
 				drawgraph(jqXHR.key);
 				}
 				});	 
-				
+				//key = "http://data.linkedmdb.org/resource/film/3951";
+		prefix ="http://www.linkedmdb.org/sparql?query=PREFIX+owl%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0D%0APREFIX+xsd%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+foaf%3A+%3Chttp%3A%2F%2Fxmlns.com%2Ffoaf%2F0.1%2F%3E%0D%0APREFIX+oddlinker%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Foddlinker%2F%3E%0D%0APREFIX+map%3A+%3Cfile%3A%2FC%3A%2Fd2r-server-0.4%2Fmapping.n3%23%3E%0D%0APREFIX+db%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2F%3E%0D%0APREFIX+dbpedia%3A+%3Chttp%3A%2F%2Fdbpedia.org%2Fproperty%2F%3E%0D%0APREFIX+skos%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0D%0APREFIX+dc%3A+%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0D%0APREFIX+movie%3A+%3Chttp%3A%2F%2Fdata.linkedmdb.org%2Fresource%2Fmovie%2F%3E%0D%0A";
+		var query = "SELECT * WHERE{<"+key+"> owl:sameAs ?page }";		
+			var uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";
+							$.ajax({
+									type:     "GET",
+									url:      uri,
+									dataType: "jsonp",
+									success:function(data){	
+										var arr = data['results']['bindings'];
+										for(var i=0;i<arr.length;i++){
+											if(arr[i]['page']['value'].search("dbpedia")!=-1){
+												var qr = "select * where {<"+decodeURIComponent(arr[i]['page']['value'])+"> dbpedia-owl:wikiPageExternalLink ?s}";
+												qr = encodeURIComponent(qr).replace(/%20/g,'+').replace(/%20/g,'+');
+												qr = qr.replace("(","%27");
+												qr = qr.replace("(","%28");
+												qr = qr.replace(")","%29");
+												var ui = "http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&query="+qr+"&format=application%2Fsparql-results%2Bjson&timeout=30000&debug=on";
+												$.ajax({
+													type:     "GET",
+													url:      ui,
+													success:function(data, textStatus, jqXHR){	
+														for(var i=0;i<data['results']['bindings'].length;i++){
+															$("#cssmenuExtend").show();
+															$("#extendlink").append('<a href="'+data['results']['bindings'][i]['s']['value']+'" target="_blank">'+data['results']['bindings'][i]['s']['value']+'</a></br>');
+														}
+													}
+												}); 
+											}
+										}
+									}
+								});
 		var bg=$('div#popup-bg');
 		var obj=$('div#popup');
 		var btnClose=obj.find('#popup-close');
@@ -942,6 +1013,7 @@ function sleep(milliseconds) {
   }
 }
 
+
 function MaxAB(a,b){
 		if(a>b)
 			return a;
@@ -991,6 +1063,10 @@ function exSearch(type_ex){
 	var countAB = 0;
 	var countA = 0;
 			if(type_ex!=11&&type_ex!=10){
+			$("#fast_box").fadeOut();
+			$("#top_box").fadeOut();
+			$("#wiki_box").fadeOut();
+			$("#all_box").fadeOut();
 			$("#startDepth").html("");
 				$("#rawtop").html("");
 				$("#rawfast").html("");
@@ -1591,10 +1667,7 @@ function exSearch(type_ex){
 										$("#top_box").fadeIn();
 									var rawtmp = $("#rawtop").html();
 										if(rawtmp.search(jqXHR.key)==-1){
-													
-													if(img!="")
-										$("#topsearch").prepend(str);
-									else
+												
 										$("#topsearch").append(str);	
 													$("#rawtop").append(" "+jqXHR.key);
 													}							
@@ -1821,14 +1894,26 @@ function exSearch(type_ex){
 });		
 }
 
+
 function showWhy(){
 //showPopupWating("Sorry! This feature is coming soon");
 //return;
 	$("#popup-content").fadeOut();
+	$("#extendlink").fadeOut();
 	$("#popup-why").fadeIn();
 				
 			
 }
+function showExtendlink(){
+//showPopupWating("Sorry! This feature is coming soon");
+//return;
+	$("#popup-content").fadeOut();
+	$("#popup-why").fadeOut();
+	$("#extendlink").fadeIn();
+				
+			
+}
+
 
 function showPopupWating(string){
 		$("#top-content-name").html('');
@@ -1958,6 +2043,7 @@ function hideWhy(){
 
 			<div class="wrap">
 			 <div id="main" >
+			 
 
 <div style="display:none" id="allType">
 [{"key":"film_distribution_medium","value":"film distribution medium"},{"key":"film_art_director","value":"film art director"},{"key":"special_film_performance_type","value":"special film performance type"},{"key":"interlink","value":"interlink"},{"key":"film_screening_venue","value":"film screening venue"},{"key":"film_festival","value":"film festival"},{"key":"film_awards_ceremony","value":"film awards ceremony"},{"key":"film_production_designer","value":"film production designer"},{"key":"personal_film_appearance","value":"personal film appearance"},{"key":"film_collection","value":"film collection"},{"key":"film_character","value":"film character"},{"key":"content_rating","value":"content rating"},{"key":"linkage_run","value":"linkage run"},{"key":"country","value":"country"},{"key":"production_company","value":"production company"},{"key":"music_contributor","value":"music contributor"},{"key":"film_cut","value":"film cut"},{"key":"film_format","value":"film format"},{"key":"writer","value":"writer"},{"key":"performance","value":"performance"},{"key":"film_film_company_relationship","value":"film film company relationship"},{"key":"film_job","value":"film job"},{"key":"content_rating_system","value":"content rating system"},{"key":"dubbing_performance","value":"dubbing performance"},{"key":"film_location","value":"film location"},{"key":"film_casting_director","value":"film casting director"},{"key":"film_company","value":"film company"},{"key":"personal_film_appearance_type","value":"personal film appearance type"},{"key":"film_featured_song","value":"film featured song"},{"key":"film_distributor","value":"film distributor"},{"key":"film_series","value":"film series"},{"key":"film_set_designer","value":"film set designer"},{"key":"film_festival_event","value":"film festival event"},{"key":"film_costume_designer","value":"film costume designer"},{"key":"film","value":"film"},{"key":"film_genre","value":"film genre"},{"key":"film_festival_focus","value":"film festival focus"},{"key":"film_crewmember","value":"film crewmember"},{"key":"film_subject","value":"film subject"},{"key":"film_critic","value":"film critic"},{"key":"director","value":"director"},{"key":"film_regional_release_date","value":"film regional release date"},{"key":"film_festival_sponsor","value":"film festival sponsor"},{"key":"film_theorist","value":"film theorist"},{"key":"cinematographer","value":"cinematographer"},{"key":"film_film_distributor_relationship","value":"film film distributor relationship"},{"key":"producer","value":"producer"},{"key":"film_crew_gig","value":"film crew gig"},{"key":"actor","value":"actor"},{"key":"editor","value":"editor"},{"key":"film_story_contributor","value":"film story contributor"}]</div>		
@@ -1986,11 +2072,11 @@ function hideWhy(){
 		   <li><a href='#' onclick="hideWhy();" ><span>Info</span></a></li>
 		   <li><a href='#' id = "cssmenuWhy" onclick="showWhy();"><span>Why it is recomended?</span></a></li>
 		   <li><a href='#' onclick="exSearch(1);"><span>Run an exploration</span></a></li>
+		   <li><a href='#' id = "cssmenuExtend" onclick="showExtendlink();"><span>Extend link</span></a></li>
 		   <li><a href='#' id = "cssmenuDelete" style="display:none;background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
 		</ul>
 		</div>
 	</div>
-	<div class="fb-comments" data-href="http://exploratorysearch.esy.es/" data-numposts="3" data-colorscheme="dark"></div>
     <div id="popup-content" style="display:;overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
 	
 	<div class="loading1">
@@ -2000,6 +2086,10 @@ function hideWhy(){
 							<div></div>
 							<div></div>
 						</div></div>
+	
+	<div id="extendlink" style="display:;overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
+		
+	</div>	
 	<div id="popup-why" style="display:">
 	
 	<div id='popup-why-name' style="color:#d35400; font-size:20px; margin:2%;"></div>
