@@ -72,6 +72,11 @@ Graph.prototype = {
         }
         return this.nodes[id];
     },
+	
+	editLabel: function(id, lb) {
+        this.nodes[id].label = lb;
+        return this.nodes[id];
+    },
 
     addEdge: function(source, target, style) {
         var s = this.addNode(source);
@@ -103,7 +108,7 @@ Graph.prototype = {
                 this.edges.splice(i, 1);
                 i--;
             }
-        }
+        } 
     }
 };
 

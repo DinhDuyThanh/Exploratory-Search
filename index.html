@@ -760,9 +760,10 @@ $("div#popup-content").html('<div class="loading1"><div></div><div></div><div></
 		});
 }
 
-function showPopupEX(uri,key){
+function showPopupEX(uri,key,mainKey){
 		$("#top-content-name").html('');
 			$("#cssmenu").fadeOut();
+			alert(key+mainKey);
 		$("div#popup-content").html('<div class="loading1"><div></div><div></div><div></div><div></div><div></div></div></div>');
 		   $.ajax({
 				type:     "GET",
@@ -770,6 +771,7 @@ function showPopupEX(uri,key){
 				dataType: 'json',
 				beforeSend: function (jqXHR) {
 					jqXHR.key = key;
+					jqXHR.mainKey = mainKey
 				},
 				success:function(data, textStatus, jqXHR){				
 				//if(jqXHR.key!=""){
@@ -815,12 +817,22 @@ function showPopupEX(uri,key){
 					+'</div>'
 					+'</li>';
 					else str="";
+					if($("#numEXKey").html()=="1"){
+					var why=jqXHR.key.replace("http://data.linkedmdb.org/resource/","");
+					var ind = parseInt(why.indexOf("\/"));
+					why = why.slice(0,ind);
+					var arrtmp = [];
+					arrtmp.push({key1:jqXHR.key,key:jqXHR.mainKey,value:why});
+					var json = JSON.stringify(arrtmp);
+					$("#RelateArr").html(json);
+					}
 				$("#popup-name").html(name);	
 				$("#popup-content").html(str);
 				$("#top-content-name").html(name);
 				$("#popup-why-name").html("Why "+name+" is recomended?");
 				$("#popup-content-uri").html(jqXHR.key);
-				drawgraph();
+				alert("ab");
+				drawgraph(jqXHR.key);
 				}
 				});	 
 				
@@ -959,6 +971,7 @@ function sortStringDesc(a1, a2){
      }
 	 
 function exSearch(type_ex){
+	var arrNameGraph = [];
 	var pivot = [];
 	var arrA = [];
 	var arrAB = [];
@@ -979,6 +992,7 @@ function exSearch(type_ex){
 				$("#topsearch").html('');
 				$("#fastsearch").html('');
 				$("#allsearch").html('');
+				$("#numEXKey").html("");
 				}
 	str = document.getElementById("rawSAkey").innerHTML;
 	nameStr = $("#rawSAname").html();
@@ -1002,7 +1016,7 @@ function exSearch(type_ex){
 		$('div#popup-bg').fadeOut(500);
 		$('div#popup').fadeOut(500);
 		}
-	
+	//str = " http://data.linkedmdb.org/resource/film/72";
 	//str = " http://data.linkedmdb.org/resource/actor/29852 http://data.linkedmdb.org/resource/actor/29851";
 	//str = " http://data.linkedmdb.org/resource/film/837 http://data.linkedmdb.org/resource/film/2115 http://data.linkedmdb.org/resource/actor/57";
 	//neu khong add gi vao thi se yeu cau them dau vao
@@ -1096,8 +1110,26 @@ function exSearch(type_ex){
 									 } 
 								});
 		}
+		//In ten cua cac thuc the dau vao
+		for(i=1;i<res.length;i++){
+					query = "SELECT * WHERE {<"+res[i]+"> rdfs:label ?name}";
+					uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = res[i];
+							},
+						success:function(data, textStatus, jqXHR){
+							arrNameGraph.push({key:jqXHR.key,value:data['results']['bindings'][0]['name']['value']});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
+						}
+					});
+		}
 		//Neu chi co 1 thuc the tim kiem thi dua ra cac thuoc tinh cua thuc the do
 		if(res.length==2){
+		$("#numEXKey").html(1);
 		            var count2=0;
             var countb=0,counta=0;
 			for(var j=0;j<pivot.length;j++){
@@ -1112,6 +1144,7 @@ function exSearch(type_ex){
 						beforeSend: function (jqXHR) {
 								jqXHR.key = pivot[j].key;
 								jqXHR.mainName = resName[1];
+								jqXHR.mainKey = res[1];
 							},
 						success:function(data, textStatus, jqXHR){						
 						var key = jqXHR.key;
@@ -1148,6 +1181,7 @@ function exSearch(type_ex){
 										jqXHR.uri = uri;
 										jqXHR.key = key;
 										jqXHR.mainName = mainName;
+										jqXHR.mainKey = res[1];
 									},
 									success:function(data, textStatus, jqXHR){	
 										var name,img,type,des;
@@ -1183,8 +1217,7 @@ function exSearch(type_ex){
 											str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'<h2>'+why+'</h2>'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.mainKey+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
@@ -1265,7 +1298,8 @@ function exSearch(type_ex){
 											 }
 									
 									}*/
-									
+									arrNameGraph.push({key:key,value:name});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
 									$("#loading").fadeOut("slow");
 									   $("#abc").fadeIn();
 										$("#top_box").fadeIn();
@@ -1374,7 +1408,7 @@ function exSearch(type_ex){
 										str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
@@ -1386,6 +1420,8 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
+										arrNameGraph.push({key:key,value:name});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
 										$("#loading").fadeOut("slow");
 										   $("#abc").fadeIn();
 											$("#fast_box").fadeIn();
@@ -1494,7 +1530,7 @@ function exSearch(type_ex){
 										str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
@@ -1504,6 +1540,8 @@ function exSearch(type_ex){
 											arrNameB.push({key:jqXHR.key,value:name});
 											}
 										else str="";
+										arrNameGraph.push({key:key,value:name});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
 										$("#abc").fadeIn();
 										$("#loading").fadeOut("slow");
 										$("#top_box").fadeIn();
@@ -1583,7 +1621,7 @@ function exSearch(type_ex){
 										str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
@@ -1593,6 +1631,8 @@ function exSearch(type_ex){
 											arrNameB.push({key:jqXHR.key,value:name});
 											}
 										else str="";
+										arrNameGraph.push({key:key,value:name});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
 										$("#loading").fadeOut("slow");
 										$("#abc").fadeIn();
 										$("#top_box").fadeIn();
@@ -1699,7 +1739,7 @@ function exSearch(type_ex){
 										str = '<li><div class="post-info">'
 											+img
 											+'<div class="post-basic-info">'
-											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
+											+'	<h3><a href="#" onclick="showPopupEX(\''+jqXHR.uri+'\',\''+jqXHR.key+'\',\''+jqXHR.key+'\');" >'+name+'</a>'
 											+'<a href="#"  onclick="addExSearch(\''+encodeURIComponent(name)+'\',\''+jqXHR.key+'\',\''+jqXHR.uri+'\');">Add Seach</a>'
 											+'	<span><a href="#"><label> </label>'+type+'</a></span>'
 											+'	<p>'+des+'</p>'
@@ -1711,6 +1751,8 @@ function exSearch(type_ex){
 										//alert(JSON.stringify(arrNameB));	
 											}
 										else str="";
+										arrNameGraph.push({key:key,value:name});
+									$("#nameGraph").html(JSON.stringify(arrNameGraph));
 										$("#loading").fadeOut("slow");
 										$("#abc").fadeIn();
 										$("#all_box").fadeIn();
@@ -1744,8 +1786,8 @@ function exSearch(type_ex){
 
 
 function showWhy(){
-showPopupWating("Sorry! This feature is coming soon");
-return;
+//showPopupWating("Sorry! This feature is coming soon");
+//return;
 	$("#popup-content").fadeOut();
 	$("#popup-why").fadeIn();
 				
@@ -1893,17 +1935,19 @@ function hideWhy(){
 <div id="depthKey" style="display:none"></div>
 <div id="depthKey1" style="display:none"></div>
 <div id="startDepth" style="display:none"></div>
+<div id="numEXKey" style="display:none"></div>
+<div id="nameGraph" style="display:none"></div>
 <script type='text/javascript'>window._sbzq||function(e){e._sbzq=[];var t=e._sbzq;t.push(["_setAccount",4305]);var n=e.location.protocol=="https:"?"https:":"http:";var r=document.createElement("script");r.type="text/javascript";r.async=true;r.src=n+"//static.subiz.com/public/js/loader.js";var i=document.getElementsByTagName("script")[0];i.parentNode.insertBefore(r,i)}(window);</script>
 
 <div id="popup-bg"></div>
 <div id="popup">
 	<div id="popup-header"><span id="popup-name"></span><span id="popup-close" title="Close">x</span></div>
-	<div id="top-content">
+	<div id="top-content" >
 		<div id="top-content-name"></div>
 		<div id="popup-content-uri" style="display:none"></div>
 		<div id='cssmenu' style="display:none">
 		<ul>
-		   <li><a href='#' onclick="hideWhy();"><span>Info</span></a></li>
+		   <li><a href='#' onclick="hideWhy();" ><span>Info</span></a></li>
 		   <li><a href='#' id = "cssmenuWhy" onclick="showWhy();"><span>Why it is recomended?</span></a></li>
 		   <li><a href='#' onclick="exSearch(1);"><span>Run an exploration</span></a></li>
 		   <li><a href='#' id = "cssmenuDelete" style="display:none;background:#f1c40f; color:white;font-weight:bold;" onclick="deleteKeyExSearch();"><span>Delete it?</span></a></li>
@@ -1911,7 +1955,7 @@ function hideWhy(){
 		</div>
 	</div>
 	<div class="fb-comments" data-href="http://exploratorysearch.esy.es/" data-numposts="3" data-colorscheme="dark"></div>
-    <div id="popup-content" style="overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
+    <div id="popup-content" style="display:;overflow-y: scroll; overflow-x:hidden;  width:700px; height:400px;">
 	
 	<div class="loading1">
 							<div></div>
@@ -1921,7 +1965,9 @@ function hideWhy(){
 							<div></div>
 						</div></div>
 	<div id="popup-why" style="display:">
-	<div id='canvas'></div>
+	
+	<div id='popup-why-name' style="color:#d35400; font-size:20px; margin:2%;"></div>
+	<div id='canvas' style="padding:2% 4%;"></div>
 	</div>	
 </div>
 					<div id="loading" class="element" style="display: none;">	

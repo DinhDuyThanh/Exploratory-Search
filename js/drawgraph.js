@@ -138,17 +138,54 @@ function drawgraph1(key) {
     //    console.log(g.nodes["kiwi"]);
 };
 /* only do all this when document has finished loading (needed for RaphaelJS) */
-function drawgraph() {
+function getInfo(g,key){
+				query = "SELECT * WHERE {<"+key+"> rdfs:label ?name}";
+				uri = prefix+encodeURIComponent(query).replace(/%20/g,'+')+"&output=json";	
+					$.ajax({
+						type:     "GET",
+						url:      uri, // <-- Here
+						dataType: "jsonp",
+						beforeSend: function (jqXHR) {
+								jqXHR.key = key;
+							},
+						success:function(data, textStatus, jqXHR){
+							g.editLabel(jqXHR.key,data['results']['bindings'][0]['name']['value']);
+						}
+					});
+}
+function searchname(arr,key){
+	for(var i=0;i<arr.length;i++){
+		if(arr[i].key==key)
+			return arr[i].value;
+	}
+}
+function drawgraph(key) {
     
-    var width = 500;
-    var height = 300;
-    
+    var width = 660;
+    var height = 220;
     g = new Graph();
-   
+    var json = $("#RelateArr").html();	
+   var parsed = JSON.parse(json);
+   json = $("#nameGraph").html();
+   var namearr = JSON.parse(json);
+  
+	for(var i=0;i<parsed.length;i++){
+		if(parsed[i].key1==key){
+			if($("#numEXKey").html()=="1"){
+			g.addEdge(searchname(namearr,parsed[i].key1), "Titanic", { directed : true ,stroke : "#bfa" , fill : "#56f", label : parsed[i].value });			 		
+			}
+			else
+				g.addEdge(searchname(namearr,parsed[i].key1), searchname(namearr,parsed[i].key), { directed : false ,stroke : "#bfa" , fill : "#56f", label : parsed[i].value });
+		}
+	}
+	
+	//g.addNode(parsed[0].key1, { label : "Tomato" });
+		
+					//g.editLabel(parsed[0].key1,"Tomato");
     /* customize the colors of that edge */
-    g.addEdge("Leonardo DiCaprio", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "is actor of" });
-    g.addEdge("Kate Winslet", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "0,456712543368255" });
-    g.addEdge("Kate Winslet", "Leonardo DiCaprio", { stroke : "#bfa" , fill : "#56f", label : "perform with" });
+   // g.addEdge("Leonardo DiCaprio", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "is actor of" });
+  //  g.addEdge("Kate Winslet", "Revolutionary Road", { directed : true ,stroke : "#bfa" , fill : "#56f", label : "0,456712543368255" });
+   // g.addEdge("Kate Winslet", "Leonardo DiCaprio", { stroke : "#bfa" , fill : "#56f", label : "perform with" });
     
 
    // g.removeNode("1");
